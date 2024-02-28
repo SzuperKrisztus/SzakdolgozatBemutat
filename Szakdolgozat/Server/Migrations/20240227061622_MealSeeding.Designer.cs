@@ -11,8 +11,8 @@ using Szakdolgozat.Server.Data;
 namespace Szakdolgozat.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240226192038_CreateInitial")]
-    partial class CreateInitial
+    [Migration("20240227061622_MealSeeding")]
+    partial class MealSeeding
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,6 +53,35 @@ namespace Szakdolgozat.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Meals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Allergen = "Laktóz, glutén",
+                            Description = "Durum spaghetti tészta, paradicsomos marha raguval és parmezánnal",
+                            ImageUrl = "https://supervalu.ie/thumbnail/800x600/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
+                            Name = "Bolgonai Spaghetti",
+                            Price = 1000m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Allergen = "Glutén, Tojás, Laktóz",
+                            Description = "Durum spaghetti tészta, tojásos pecorino romano öntettel guanchaleval",
+                            ImageUrl = "https://www.sipandfeast.com/wp-content/uploads/2022/09/spaghetti-carbonara-recipe-snippet.jpg",
+                            Name = "Carbonara Spaghetti",
+                            Price = 1000m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Allergen = "laktóz, glutén",
+                            Description = "Nápolyi pizza paradicsomos alappal, bazsalikommal bölény mozzarellával olivaolajjal",
+                            ImageUrl = "https://assets.biggreenegg.eu/app/uploads/2018/06/28115815/topimage-pizza-special17-800x500.jpg",
+                            Name = "Margherita Pizza",
+                            Price = 1000m
+                        });
                 });
 #pragma warning restore 612, 618
         }

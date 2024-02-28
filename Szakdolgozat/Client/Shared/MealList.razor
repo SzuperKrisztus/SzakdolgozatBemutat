@@ -1,34 +1,47 @@
-﻿@inject HttpClient Http
+﻿@inject IMealService MealService
+@implements IDisposable
 
-<ul class="list-unstyled">
-    @foreach (var meal in Meals)
-    {
-        <li class="media my-3">
-            <div class="media-img-wrapper mr-2">
-                <a href="#">
-                    <img class="media-img" src="@meal.ImageUrl" alt="@meal.Name" />
-                </a>
-            </div>
-            <div class="media-body">
-                <a href="#">
-                    <h4 class="mb-0">@meal.Name</h4>
-                </a>
-                <p>@meal.Description</p>
-                <h5 class="price">
-                    @meal.Price Ft.
-                </h5>
-            </div>
-        </li>
-    }
-</ul>
+
+@if(MealService.Meals == null || MealService.Meals.Count == 0)
+{
+    <span>Loading Menu...</span>
+}
+else
+{
+    <ul class="list-unstyled">
+        @foreach (var meal in MealService.Meals)
+        {
+            <li class="media my-3">
+                <div class="media-img-wrapper mr-2">
+                    <a href="/meal/@meal.Id">
+                        <img class="media-img" src="@meal.ImageUrl" alt="@meal.Name" />
+                    </a>
+                </div>
+                <div class="/meal/@meal.Id">
+                    <a href="#">
+                        <h4 class="mb-0">@meal.Name</h4>
+                    </a>
+                    <p>@meal.Description</p>
+                    <h5 class="price">
+                        @meal.Price Ft.
+                    </h5>
+                </div>
+            </li>
+        }
+    </ul>
+}
+
 
 @code {
-    private static List<Meal> Meals = new List<Meal>();
 
-    protected override async Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
-        var result = await Http.GetFromJsonAsync<List<Meal>>("api/Meal");
-        if (result != null)
-            Meals = result;
+        MealService.MealsChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        MealService.MealsChanged += StateHasChanged;
     }
 }

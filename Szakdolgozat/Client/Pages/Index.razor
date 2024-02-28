@@ -1,5 +1,17 @@
 ﻿@page "/"
+@page "/{categoryUrl}"
+@inject IMealService MealService
 
 <PageTitle>My Restaurant</PageTitle>
 
 <MealList/>
+
+@code {
+    [Parameter]
+    public string? CategoryUrl { get; set; } = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await MealService.GetMeals(CategoryUrl);
+    }
+}

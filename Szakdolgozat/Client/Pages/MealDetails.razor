@@ -1,0 +1,42 @@
+﻿@page "/meal/{id:int}"
+@inject IMealService MealService
+
+
+@if(meal == null){
+    <span>@message</span>
+}
+else{
+    <div class="media-img-wrapper mr-2">
+        <img class="media-img" src="@meal.ImageUrl" alt="@meal.Name"/>
+    </div>
+    <div class=" media-body">
+        <h2 class="mb-0">@meal.Name</h2>
+        <p>@meal.Description</p>
+        <p>@meal.Allergen</p>
+        <h4 class="price">
+            @meal.Price Ft.
+        </h4>
+    </div>
+}
+
+@code {
+    private Meal? meal = null;
+    private string message = string.Empty;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading Meal...";
+        var result = await MealService.GetMeal(Id);
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            meal = result.Data;
+        }
+    }
+}

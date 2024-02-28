@@ -9,23 +9,16 @@
     transform: scale(1.1);
 }
 
-.media{
-display:flex;
-align-items: flex-start;
-}
-
-.media-body{
-    flex:1;
-}
 .media-img-wrapper {
     width: 200px;
     text-align: center;
     margin-right: 10px;
 }
 
-.price {
-    color: green;
+.price{
+    color:magenta;
 }
+
 
 @media (max-widht: 1023.98px) {
     .media{

@@ -1,7 +1,10 @@
 global using Szakdolgozat.Shared;
 global using Microsoft.EntityFrameworkCore;
+global using Szakdolgozat.Server.Data;
+global using Szakdolgozat.Server.Services.MealService;
+global using Szakdolgozat.Server.Services.CategoryService;
 using Microsoft.AspNetCore.ResponseCompression;
-using Szakdolgozat.Server.Data;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +17,14 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddScoped<IMealService, MealService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 
 var app = builder.Build();
 
