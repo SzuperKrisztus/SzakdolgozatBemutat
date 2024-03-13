@@ -13,6 +13,7 @@ namespace Szakdolgozat.Client.Services.MealService
         }
 
         public List<Meal> Meals { get ; set ; } = new List<Meal>();
+        public string Message { get; set; } = "Loading Meals...";
 
         public event Action MealsChanged;
 
@@ -33,6 +34,20 @@ namespace Szakdolgozat.Client.Services.MealService
             MealsChanged.Invoke();
         }
 
-        
+        public async Task<List<string>> GetMealSearchSuggestions(string searchText)
+        {
+            var result = await _http.GetFromJsonAsync<ServiceResponse<List<string>>>("api/meal/searchsuggestions/");
+            return result.Data;
+        }
+
+        public async Task SearchMeals(string searchText)
+        {
+            var result = await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>($"api/meal/search/{searchText}");
+            if (result != null && result.Data != null)
+                Meals = result.Data;
+            if (Meals.Count == 0) Message = "No meals found.";
+                MealsChanged?.Invoke();
+
+        }
     }
 }

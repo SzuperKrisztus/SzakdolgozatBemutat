@@ -16,8 +16,16 @@
 
     protected override async Task OnParametersSetAsync()
     {
-
-        await MealService.GetMeals(CategoryUrl);
+        if (SearchText != null)
+        {
+            await MealService.SearchMeals(SearchText);
+          
+        }
+        else
+        {
+            await MealService.GetMeals(CategoryUrl);
+            
+        }
     }
 
     
