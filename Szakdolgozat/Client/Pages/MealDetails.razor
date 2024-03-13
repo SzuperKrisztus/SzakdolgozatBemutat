@@ -1,11 +1,13 @@
 ﻿@page "/meal/{id:int}"
 @inject IMealService MealService
+@inject ICartService CartService
 
 
 @if(meal == null){
     <span>@message</span>
 }
 else{
+
     <div class="media-img-wrapper mr-2">
         <img class="media-img" src="@meal.ImageUrl" alt="@meal.Name"/>
     </div>
@@ -36,8 +38,11 @@ else{
                 @GetSelectedVariant().Price Ft.
             </h4>
         }
-        
+        <button class="btn btn-primary" @onclick="AddToCart">
+            <i class="oi oi-cart"></i> &nbsp;&nbsp;&nbsp;Add to Cart
+            </button>
     </div>
+
 }
 
 @code {
@@ -71,4 +76,19 @@ else{
         var variant = meal.Variants.FirstOrDefault(v => v.MealTypeId == currentTypeId);
         return variant;
     }
+
+
+    private async Task AddToCart()
+    {
+        var mealVariant = GetSelectedVariant();
+        var cartMeal = new CartMeal
+            {
+                MealId = mealVariant.MealId,
+                MealTypeId = mealVariant.MealTypeId,
+
+        };
+       
+       await CartService.AddToCart(cartMeal);
+    }
+
 }

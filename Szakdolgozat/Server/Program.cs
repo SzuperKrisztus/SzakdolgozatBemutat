@@ -3,7 +3,9 @@ global using Microsoft.EntityFrameworkCore;
 global using Szakdolgozat.Server.Data;
 global using Szakdolgozat.Server.Services.MealService;
 global using Szakdolgozat.Server.Services.CategoryService;
+global using Szakdolgozat.Server.Services.CartService;
 using Microsoft.AspNetCore.ResponseCompression;
+
 
 
 
@@ -24,6 +26,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
+
 
 
 var app = builder.Build();

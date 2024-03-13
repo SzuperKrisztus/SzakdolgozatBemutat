@@ -165,21 +165,21 @@
                  new MealVariant
                  {
                      MealId = 1, //Spaghetti
-                     MealTypeId = 7, //Bolognai
+                     MealTypeId = 8, //Bolognai
                      Price = 2500,
                      OriginalPrice = 2500
                  },
                  new MealVariant
                  {
                      MealId = 2, //Spaghetti
-                     MealTypeId = 7,//Carbonarra
+                     MealTypeId = 9,//Carbonarra
                      Price = 2200,
                      OriginalPrice = 2200m
                  },
                  new MealVariant
                  {
                      MealId = 3, //Pizza
-                     MealTypeId = 7, //Margharita
+                     MealTypeId = 10, //Margharita
                      Price = 2300,
                      OriginalPrice = 2300
                  }

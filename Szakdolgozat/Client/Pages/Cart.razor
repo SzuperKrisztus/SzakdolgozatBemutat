@@ -1,0 +1,56 @@
+﻿@page "/cart"
+@inject ICartService CartService
+
+
+<PageTitle>Kosár</PageTitle>
+
+<h3>Kosár</h3>
+
+@if (cartMeals == null || cartMeals.Count == 0)
+{
+    <p>@message</p>
+}
+else
+{
+    <div class="cart-container">
+        <div class="cart-items">
+            @foreach (var meal in cartMeals)
+            {
+                <div class="cart-item">
+                    <div class="image-wrapper">
+                        <img src="@meal.ImageUrl" class="image" />
+                    </div>
+                    <div class="details">
+                        <div class="name-price">
+                            <h5><a href="/meal/@meal.MealId">@meal.Name</a></h5>
+                            <div class="price">@meal.Price Ft</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="cart-total">
+            Összesen: @cartMeals.Sum(meal => meal.Price) Ft
+        </div>
+    </div>
+
+}
+
+@code {
+    List<CartMealResponseDTO> cartMeals = null;
+    string message = "Loading Cart...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if ((await CartService.GetCartItems()).Count == 0)
+        {
+            message = "Your Cart is empty.";
+            cartMeals = new List<CartMealResponseDTO>();
+
+        }
+        else
+        {
+            cartMeals = await CartService.GetCartMeals();
+        }
+    }
+}
