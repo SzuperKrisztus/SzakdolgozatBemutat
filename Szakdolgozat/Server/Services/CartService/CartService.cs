@@ -39,7 +39,8 @@ namespace Szakdolgozat.Server.Services.CartService
                     MealType = mealVariant.MealType.Name,
                     Price = mealVariant.Price,
                     ImageUrl = meal.ImageUrl,
-                    MealTypeId = mealVariant.MealTypeId
+                    MealTypeId = mealVariant.MealTypeId,
+                    Quantity = item.Quantity
 
                 };
                 result.Data.Add(cartMeal);

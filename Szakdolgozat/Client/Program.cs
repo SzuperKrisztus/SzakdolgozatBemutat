@@ -1,11 +1,11 @@
 global using Szakdolgozat.Shared;
 global using Szakdolgozat.Client.Services.MealService;
+global using Szakdolgozat.Client.Services.CartService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Szakdolgozat.Client;
 using Szakdolgozat.Client.Services.CategoryService;
 using Blazored.LocalStorage;
-using Szakdolgozat.Client.Services.CartService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

@@ -10,6 +10,8 @@ namespace Szakdolgozat.Shared
     {
         public int MealId { get; set; }
         public int MealTypeId { get; set; }
+
+        public int Quantity { get; set; }
     }
         
 }
