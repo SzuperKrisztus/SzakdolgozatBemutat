@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Szakdolgozat.Server.Data;
 
@@ -10,9 +11,10 @@ using Szakdolgozat.Server.Data;
 namespace Szakdolgozat.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240308112847_All_Meal_must_have_a_Variant")]
+    partial class All_Meal_must_have_a_Variant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,7 +254,7 @@ namespace Szakdolgozat.Server.Migrations
                         new
                         {
                             MealId = 4,
-                            MealTypeId = 4,
+                            MealTypeId = 2,
                             OriginalPrice = 800.00m,
                             Price = 1200.00m
                         },

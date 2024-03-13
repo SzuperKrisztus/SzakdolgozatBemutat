@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/search/{searchText}"
 @page "/{categoryUrl}"
 @inject IMealService MealService
 
@@ -10,8 +11,14 @@
     [Parameter]
     public string? CategoryUrl { get; set; } = null;
 
+    [Parameter]
+    public string? SearchText { get; set; } = null;
+
     protected override async Task OnParametersSetAsync()
     {
+
         await MealService.GetMeals(CategoryUrl);
     }
+
+    
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Szakdolgozat.Server.Data;
 
@@ -10,9 +11,10 @@ using Szakdolgozat.Server.Data;
 namespace Szakdolgozat.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240307180626_MealVariants")]
+    partial class MealVariants
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,21 +205,6 @@ namespace Szakdolgozat.Server.Migrations
                         {
                             Id = 7,
                             Name = "Licsis"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Bolognai Spaghetti"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Carbonara Spaghetti"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Margharita Pizza"
                         });
                 });
 
@@ -248,13 +235,6 @@ namespace Szakdolgozat.Server.Migrations
                             MealTypeId = 3,
                             OriginalPrice = 800.00m,
                             Price = 1000.00m
-                        },
-                        new
-                        {
-                            MealId = 4,
-                            MealTypeId = 4,
-                            OriginalPrice = 800.00m,
-                            Price = 1200.00m
                         },
                         new
                         {
@@ -290,27 +270,6 @@ namespace Szakdolgozat.Server.Migrations
                             MealTypeId = 7,
                             OriginalPrice = 1000.00m,
                             Price = 1000.00m
-                        },
-                        new
-                        {
-                            MealId = 1,
-                            MealTypeId = 7,
-                            OriginalPrice = 2500m,
-                            Price = 2500m
-                        },
-                        new
-                        {
-                            MealId = 2,
-                            MealTypeId = 7,
-                            OriginalPrice = 2200m,
-                            Price = 2200m
-                        },
-                        new
-                        {
-                            MealId = 3,
-                            MealTypeId = 7,
-                            OriginalPrice = 2300m,
-                            Price = 2300m
                         });
                 });
 

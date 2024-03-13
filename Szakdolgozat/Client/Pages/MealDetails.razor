@@ -13,15 +13,37 @@ else{
         <h2 class="mb-0">@meal.Name</h2>
         <p>@meal.Description</p>
         <p>@meal.Allergen</p>
-        <h4 class="price">
-            @meal.Price Ft.
-        </h4>
+        @if (meal.Variants != null && meal.Variants.Count > 1)
+        {
+            <div class=" mb-3">
+                <select class="form-select" @bind="currentTypeId">
+                    @foreach (var variant in meal.Variants)
+                    {
+                        <option value="@variant.MealTypeId">@variant.MealType.Name</option>
+                    }
+                </select>
+            </div>
+        }
+        @if (GetSelectedVariant() != null)
+        {
+            @if (GetSelectedVariant().OriginalPrice > GetSelectedVariant().Price)
+            {
+                <h6 class="text-muted original-price">
+                    @GetSelectedVariant().OriginalPrice Ft.
+                </h6>
+            }
+            <h4 class="price">
+                @GetSelectedVariant().Price Ft.
+            </h4>
+        }
+        
     </div>
 }
 
 @code {
     private Meal? meal = null;
     private string message = string.Empty;
+    private int currentTypeId = 1;
 
     [Parameter]
     public int Id { get; set; }
@@ -37,6 +59,16 @@ else{
         else
         {
             meal = result.Data;
+            if (meal.Variants.Count > 0)
+            {
+                currentTypeId = meal.Variants[0].MealTypeId;
+            }
         }
+    }
+
+    private MealVariant GetSelectedVariant()
+    {
+        var variant = meal.Variants.FirstOrDefault(v => v.MealTypeId == currentTypeId);
+        return variant;
     }
 }

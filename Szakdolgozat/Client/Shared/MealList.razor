@@ -23,7 +23,7 @@ else
                     </a>
                     <p>@meal.Description</p>
                     <h5 class="price">
-                        @meal.Price Ft.
+                        @GetPriceText(meal)
                     </h5>
                 </div>
             </li>
@@ -42,6 +42,23 @@ else
 
     public void Dispose()
     {
-        MealService.MealsChanged += StateHasChanged;
+        MealService.MealsChanged -= StateHasChanged;
+    }
+
+
+    private string GetPriceText(Meal meal)
+    {
+        var variants = meal.Variants;
+        if (variants.Count == 0)
+        {
+            return string.Empty;
+        }
+        else if (variants.Count == 1)
+        {
+            
+            return (variants[0].OriginalPrice) + " Ft.";
+        }
+        decimal minPrice = variants.Min(v => v.Price);
+        return "Starting at " + minPrice + " Ft.";
     }
 }
