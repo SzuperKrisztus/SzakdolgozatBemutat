@@ -27,7 +27,7 @@ namespace Szakdolgozat.Client.Services.CartService
             }
 
             var sameItem = cart.Find(x => x.MealId == cartMeal.MealId && x.MealTypeId == cartMeal.MealTypeId);
-            if (sameItem != null)
+            if (sameItem == null)
             {
                 cart.Add(cartMeal);
             }
@@ -37,7 +37,6 @@ namespace Szakdolgozat.Client.Services.CartService
             }
 
             await _localStorage.SetItemAsync("cart", cart);
-            OnChange.Invoke();
         }
 
         public async Task<List<CartMeal>> GetCartItems()
@@ -64,13 +63,13 @@ namespace Szakdolgozat.Client.Services.CartService
         public async Task RemoveMealFromCart(int mealId, int mealTypeId)
         {
             var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
-            if (cart != null)
+            if (cart == null)
             {
                 return;
             }
 
             var cartItem = cart.Find(x => x.MealId == mealId && x.MealTypeId == mealTypeId);
-            if (cartItem == null)
+            if (cartItem != null)
             { 
                 cart.Remove(cartItem);
                 await _localStorage.SetItemAsync("cart", cart);
@@ -81,16 +80,17 @@ namespace Szakdolgozat.Client.Services.CartService
         public async Task UpdateQuantity(CartMealResponseDTO meal)
         {
             var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
-            if (cart != null)
+            if (cart == null)
             {
                 return;
             }
 
             var cartItem = cart.Find(x => x.MealId == meal.MealId && x.MealTypeId == meal.MealTypeId);
-            if (cartItem == null)
+            if (cartItem != null)
             {
                 cartItem.Quantity = meal.Quantity;
                 await _localStorage.SetItemAsync("cart", cart);
+                
                 
             }
         }

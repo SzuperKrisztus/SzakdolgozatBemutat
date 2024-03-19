@@ -65,3 +65,7 @@
 remove-from-cart:hover{
     text-decoration:underline;
 }
+
+.input-quantity{
+    width: 70px;
+}

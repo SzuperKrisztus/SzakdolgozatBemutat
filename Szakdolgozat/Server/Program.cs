@@ -4,6 +4,7 @@ global using Szakdolgozat.Server.Data;
 global using Szakdolgozat.Server.Services.MealService;
 global using Szakdolgozat.Server.Services.CategoryService;
 global using Szakdolgozat.Server.Services.CartService;
+global using Szakdolgozat.Server.Services.AuthService;
 using Microsoft.AspNetCore.ResponseCompression;
 
 
@@ -27,6 +28,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 

@@ -23,7 +23,7 @@
                 new MealType { Id = 10, Name = "Margharita Pizza" });
 
 
-            
+
 
             modelBuilder.Entity<Category>().HasData(
                 new Category
@@ -52,7 +52,7 @@
                      Name = "Bolgonai Spaghetti",
                      Description = "Durum spaghetti tészta, paradicsomos marha raguval és parmezánnal",
                      Allergen = "Laktóz, glutén",
-                    
+
                      ImageUrl = "https://supervalu.ie/thumbnail/800x600/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
                      CategoryId = 1
 
@@ -64,7 +64,7 @@
                    Name = "Carbonara Spaghetti",
                    Description = "Durum spaghetti tészta, tojásos pecorino romano öntettel guanchaleval",
                    Allergen = "Glutén, Tojás, Laktóz",
-                  
+
                    ImageUrl = "https://www.sipandfeast.com/wp-content/uploads/2022/09/spaghetti-carbonara-recipe-snippet.jpg",
                    CategoryId = 1
 
@@ -78,7 +78,7 @@
                    Allergen = "laktóz, glutén",
                    ImageUrl = "https://assets.biggreenegg.eu/app/uploads/2018/06/28115815/topimage-pizza-special17-800x500.jpg",
                    CategoryId = 1,
-                 
+
                },
                new Meal
                {
@@ -118,7 +118,7 @@
                      MealId = 4, //Sör
                      MealTypeId = 3, //Premium Lager
                      Price = 1000.00m,
-                     OriginalPrice = 800.00m 
+                     OriginalPrice = 800.00m
                  },
                  new MealVariant
                  {
@@ -135,11 +135,11 @@
                      OriginalPrice = 0.00m
                  },
                  new MealVariant
-                   {
-                       MealId = 5, //Bor
-                       MealTypeId = 2, //Fehér bor
-                       Price = 300.00m,
-                       OriginalPrice = 0.00m
+                 {
+                     MealId = 5, //Bor
+                     MealTypeId = 2, //Fehér bor
+                     Price = 300.00m,
+                     OriginalPrice = 0.00m
                  },
                  new MealVariant
                  {
@@ -182,21 +182,26 @@
                      MealTypeId = 10, //Margharita
                      Price = 2300,
                      OriginalPrice = 2300
-                 }
+                 });
+
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Email = "user@user.com",
+                    PasswordHash = new byte[] { 1, 2, 3, 4, 5 },
+                    PasswordSalt = new byte[] { 1, 2, 3, 4, 5 },
+                    Created = DateTime.Now,
+                    Role = "user"
 
 
-                );;
-
-
-
-
-
-            ;
+                });
         }
         public DbSet<Meal> Meals { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<MealType> MealTypes { get; set; }
         public DbSet<MealVariant> MealVariants { get; set; }
+        public DbSet<User> User { get; set; }
 
 
 
