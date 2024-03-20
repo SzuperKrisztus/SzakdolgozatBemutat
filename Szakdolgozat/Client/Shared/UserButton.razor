@@ -16,6 +16,7 @@
                 <button class="dropdown-item" @onclick="Logout">Logout</button>
             </Authorized>
             <NotAuthorized>
+                
                 <a href="register" class="dropdown-item">Register</a>
                 <a href="login" class="dropdown-item">Login</a>
             </NotAuthorized>
@@ -38,7 +39,7 @@
 
     private async  Task Logout()
     {
-        await LocalStorage.RemoveItemAsync("authToken");
+        await LocalStorage.RemoveItemAsync("authtoken");
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
         NavigationManager.NavigateTo("/");
     }

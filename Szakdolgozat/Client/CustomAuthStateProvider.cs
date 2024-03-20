@@ -19,7 +19,7 @@ namespace Szakdolgozat.Client
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            string authToken = await _localStorageService.GetItemAsStringAsync("authToken");
+            string authToken = await _localStorageService.GetItemAsStringAsync("authtoken");
 
             var identity = new ClaimsIdentity();
             _http.DefaultRequestHeaders.Authorization = null;
@@ -34,8 +34,9 @@ namespace Szakdolgozat.Client
                 }
                 catch
                 {
-                    await _localStorageService.RemoveItemAsync("authToken");
+                    await _localStorageService.RemoveItemAsync("authtoken");
                     identity = new ClaimsIdentity();
+                     
                 }
             }
 
