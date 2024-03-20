@@ -64,8 +64,8 @@ namespace Szakdolgozat.Server.Services.AuthService
                                 signingCredentials: creds
                                                );
 
-            var jasonWebToken = new JwtSecurityTokenHandler().WriteToken(token);
-            return jasonWebToken;
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
 
         }
 

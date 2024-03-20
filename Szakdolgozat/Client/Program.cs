@@ -2,6 +2,7 @@ global using Szakdolgozat.Shared;
 global using Szakdolgozat.Client.Services.MealService;
 global using Szakdolgozat.Client.Services.CartService;
 global using Szakdolgozat.Client.Services.AuthService;
+global using Microsoft.AspNetCore.Components.Authorization;
 global using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -19,5 +20,8 @@ builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddOptions();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
 await builder.Build().RunAsync();

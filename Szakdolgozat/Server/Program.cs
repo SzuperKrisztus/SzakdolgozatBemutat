@@ -32,6 +32,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 
+
 var app = builder.Build();
 
 app.UseSwaggerUI();
@@ -54,6 +55,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.MapRazorPages();

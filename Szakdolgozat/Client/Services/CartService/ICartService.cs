@@ -10,5 +10,7 @@
 
         Task RemoveMealFromCart(int mealId, int mealTypeId);
         Task UpdateQuantity(CartMealResponseDTO meal);
+
+
     }
 }
