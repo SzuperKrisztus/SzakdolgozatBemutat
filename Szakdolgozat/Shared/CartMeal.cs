@@ -8,6 +8,7 @@ namespace Szakdolgozat.Shared
 {
     public class CartMeal
     {
+        public int UserId { get; set; }
         public int MealId { get; set; }
         public int MealTypeId { get; set; }
 

@@ -7,7 +7,7 @@ namespace Szakdolgozat.Client.Services.MealService
         List<Meal> Meals { get; set; }
 
         string Message { get; set; }
-        Task GetMeals(string? CategoryUrl = null);
+        Task GetMeals(string? categoryUrl = null);
 
         Task<ServiceResponse<Meal>> GetMeal(int mealId);
 

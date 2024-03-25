@@ -1,23 +1,41 @@
-﻿
-
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace Szakdolgozat.Server.Services.AuthService
 {
+
     public class AuthService : IAuthService
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(DataContext context, IConfiguration configuration)
+        public AuthService(DataContext context, IConfiguration configuration,IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor  = httpContextAccessor;
             _context = context;
             _configuration = configuration;
         }
 
+        public  int GetUserId()
+        {
+
+
+            try
+            {
+                return int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (FormatException)
+            {
+               
+                throw new Exception("Hibaüzenet");
+                return -1;
+            }
+        }
+
+        public string GetUserEmail() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
         public async Task<ServiceResponse<string>> Login(string email, string password)
         {
             var response = new ServiceResponse<string>();
@@ -53,14 +71,15 @@ namespace Szakdolgozat.Server.Services.AuthService
                new Claim(ClaimTypes.Name, user.Email)
            };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+                   .GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             var token = new JwtSecurityToken(
 
                              claims: claims,
-                              expires: DateTime.Now.AddDays(0.5),
+                              expires: DateTime.Now.AddDays(1),
                                 signingCredentials: creds
                                                );
 
@@ -122,5 +141,7 @@ namespace Szakdolgozat.Server.Services.AuthService
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
+
+       
     }
 }

@@ -10,6 +10,9 @@
             modelBuilder.Entity<MealVariant>()
                 .HasKey(p => new { p.MealId, p.MealTypeId });
 
+            modelBuilder.Entity<CartMeal>()
+                .HasKey(c => new { c.UserId,c.MealId, c.MealTypeId });
+
             modelBuilder.Entity<MealType>().HasData(
                 new MealType { Id = 1, Name = "Vörös bor" },
                 new MealType { Id = 2, Name = "Fehér bor" },
@@ -202,6 +205,8 @@
         public DbSet<MealType> MealTypes { get; set; }
         public DbSet<MealVariant> MealVariants { get; set; }
         public DbSet<User> User { get; set; }
+
+        public DbSet<CartMeal> CartMeals { get; set;}
 
 
 

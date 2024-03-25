@@ -48,8 +48,8 @@ else
 }
 
 @code {
-    List<CartMealResponseDTO> cartMeals = null;
-    string message = "Loading Cart...";
+        List<CartMealResponseDTO> cartMeals = null;
+        string message = "Loading Cart...";
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,15 +66,11 @@ else
 
     private async Task LoadCart()
     {
-        if ((await CartService.GetCartItems()).Count == 0)
+        //await CartService.GetCartMealsCount();
+        cartMeals = await CartService.GetCartMeals();
+        if ( cartMeals == null )//|| cartMeals.Count == 0)
         {
-            message = "Your Cart is empty.";
-            cartMeals = new List<CartMealResponseDTO>();
-
-        }
-        else
-        {
-            cartMeals = await CartService.GetCartMeals();
+            message = "Your cart is empty.";
         }
     }
 
