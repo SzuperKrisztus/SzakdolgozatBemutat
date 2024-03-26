@@ -19,23 +19,40 @@ namespace Szakdolgozat.Server.Services.AuthService
             _configuration = configuration;
         }
 
-        public  int GetUserId()
+        public int GetUserId()
         {
+            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+           /* var userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-
-            try
+            if (!string.IsNullOrEmpty(userIdString))
             {
-                return int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                // Az érték létezik, próbáljuk meg konvertálni int típusúvá
+                if (int.TryParse(userIdString, out int userId))
+                {
+                    // A konverzió sikerült, a userId változó tartalmazza a konvertált értéket
+                    // Tehát most meg lehet tenni azokat a lépéseket, amelyeket a helyes felhasználóazonosítóval kell végrehajtani
+                    // Például:
+                     return userId;
+                    // vagy
+                    // return true;
+                }
+                else
+                {
+                    // Nem sikerült az érték konvertálása, valószínűleg nem egész számot tartalmaz
+                    // Ebben az esetben figyelmeztetést vagy naplóbejegyzést lehet készíteni a hibáról
+                    throw new Exception("Nem sikerült az érték konvertálása, valószínűleg nem egész számot tartalmaz");
+                }
             }
-            catch (FormatException)
+            else
             {
-               
-                throw new Exception("Hibaüzenet");
-                return -1;
-            }
+                // Az érték üres vagy null, valami probléma lehet a felhasználó azonosításával
+                // Ebben az esetben figyelmeztetést vagy naplóbejegyzést lehet készíteni a hibáról
+                throw new Exception("Az érték üres vagy null, valami probléma lehet a felhasználó azonosításával");
+               /* int id = 4;
+                return id;
+            } */
         }
 
-        public string GetUserEmail() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
         public async Task<ServiceResponse<string>> Login(string email, string password)
         {
             var response = new ServiceResponse<string>();
@@ -62,7 +79,46 @@ namespace Szakdolgozat.Server.Services.AuthService
 
             return response;
         }
+        public async Task<ServiceResponse<int>> Register(User user, string password)
+        {
+            if (await UserExists(user.Email))
+            {
+                return new ServiceResponse<int>
+                {
+                    Success = false,
+                    Message = "User already exists."
+                };
+            }
 
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
+
+            return new ServiceResponse<int>
+            {
+                Data = user.Id,
+                Message = "Registration successful!"
+            };
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            if (await _context.User.AnyAsync(user => user.Email.ToLower().Equals(email.ToLower())))
+            {
+                return true;
+            }
+            return false;
+        }
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
         private string CreateWebToken(User user)
         {
             List<Claim> claims = new List<Claim>
@@ -100,47 +156,8 @@ namespace Szakdolgozat.Server.Services.AuthService
 
         }
 
-        public async Task<ServiceResponse<int>> Register(User user, string password)
-        {
-            if (await UserExists(user.Email))
-            {
-                return new ServiceResponse<int>
-                {
-                    Success = false,
-                    Message = "User already exists."
-                };
-            }
 
-            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
 
-            return new ServiceResponse<int>
-            {
-                Data = user.Id,
-                Message = "Registration successful!"
-            };
-        }
-
-        public async Task<bool> UserExists(string email)
-        {
-            if (await _context.User.AnyAsync(user => user.Email.ToLower().Equals(email.ToLower())))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
 
        
     }

@@ -7,6 +7,8 @@
         Task<ServiceResponse<string>> Login(UserLogin request);
 
         Task<bool> IsUserAuthenticated();
+
+        
     }
 }
 

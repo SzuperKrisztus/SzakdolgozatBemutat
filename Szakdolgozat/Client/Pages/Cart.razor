@@ -1,5 +1,8 @@
 ﻿@page "/cart"
 @inject ICartService CartService
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
 
 
 <PageTitle>Kosár</PageTitle>
@@ -50,9 +53,11 @@ else
 @code {
         List<CartMealResponseDTO> cartMeals = null;
         string message = "Loading Cart...";
+    bool isAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
+        isAuthenticated = await AuthService.IsUserAuthenticated();
         await LoadCart();
     }
 
@@ -62,25 +67,23 @@ else
         await LoadCart();
     }
 
-
-
     private async Task LoadCart()
     {
         //await CartService.GetCartMealsCount();
         cartMeals = await CartService.GetCartMeals();
-        if ( cartMeals == null )//|| cartMeals.Count == 0)
+        if (cartMeals == null || cartMeals.Count == 0)
         {
             message = "Your cart is empty.";
         }
     }
 
-    private async Task UpdateQuantity(ChangeEventArgs eventArgse, CartMealResponseDTO meal)
+    private async Task UpdateQuantity(ChangeEventArgs e, CartMealResponseDTO meal)
     {
-        meal.Quantity =int.Parse(eventArgse.Value.ToString());
-        if (meal.Quantity<1)
-        {
+        meal.Quantity = int.Parse(e.Value.ToString());
+        if (meal.Quantity < 1)
             meal.Quantity = 1;
-        }
         await CartService.UpdateQuantity(meal);
     }
+
+    
 }

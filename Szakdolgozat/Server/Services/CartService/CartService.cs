@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Exchange.WebServices.Data;
 using System.Security.Claims;
 
 namespace Szakdolgozat.Server.Services.CartService
@@ -7,14 +8,16 @@ namespace Szakdolgozat.Server.Services.CartService
     {
         private readonly DataContext _context;
         private readonly IAuthService _authService;
+        //private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CartService(DataContext context,IAuthService authService)
+        public CartService(DataContext context, IAuthService authService)
         {
             _context = context;
             _authService = authService;
+            //_httpContextAccessor = httpContextAccessor;
         }
 
-        
+
         public async Task<ServiceResponse<List<CartMealResponseDTO>>> GetCartMeals(List<CartMeal> cartMeals)
         {
             var result = new ServiceResponse<List<CartMealResponseDTO>>
@@ -58,24 +61,13 @@ namespace Szakdolgozat.Server.Services.CartService
 
         public async Task<ServiceResponse<List<CartMealResponseDTO>>> StoreCartMeals(List<CartMeal> cartMeals)
         {
-           cartMeals.ForEach(cartMeal => cartMeal.UserId = _authService.GetUserId());
-            _context.CartMeals.AddRange(cartMeals);
+            cartMeals.ForEach(cartMeal => cartMeal.UserId = _authService.GetUserId());
+            _context.CartMeals.AddRange(cartMeals); 
             await _context.SaveChangesAsync();
 
             return await GetDbCartMeals();
-            // return await GetCartMeals(await _context.CartMeals.Where(c => c.UserId == _authService.GetUserId()).ToListAsync());
         }
-
-       
-
-        public async Task<ServiceResponse<List<CartMealResponseDTO>>> GetDbCartMeals(int? userId = null)
-        {
-            if (userId == null)
-                userId = _authService.GetUserId();
-
-            return await GetCartMeals(await _context.CartMeals
-                .Where(ci => ci.UserId == userId).ToListAsync());
-        }
+            
 
         public async Task<ServiceResponse<bool>> AddToCart(CartMeal cartMeal)
         {
@@ -101,7 +93,7 @@ namespace Szakdolgozat.Server.Services.CartService
         public async Task<ServiceResponse<bool>> UpdateQuantity(CartMeal cartMeal)
         {
             var dbCartItem = await _context.CartMeals
-                 .FirstOrDefaultAsync(ci => ci.MealId == cartMeal.MealId  &&
+                 .FirstOrDefaultAsync(ci => ci.MealId == cartMeal.MealId &&
                  ci.MealTypeId == cartMeal.MealTypeId && ci.UserId == _authService.GetUserId());
             if (dbCartItem == null)
             {
@@ -143,7 +135,18 @@ namespace Szakdolgozat.Server.Services.CartService
         public async Task<ServiceResponse<int>> GetCartMealsCount()
         {
             var count = (await _context.CartMeals.Where(ci => ci.UserId == _authService.GetUserId()).ToListAsync()).Count;
-            return new ServiceResponse<int> { Data = count };
+            return new ServiceResponse<int> { Data = count }; //1 helyett count
+        }
+
+
+        public async Task<ServiceResponse<List<CartMealResponseDTO>>> GetDbCartMeals(int? userId = null)
+        {
+
+            if (userId == null)
+                userId = _authService.GetUserId();
+
+            return await GetCartMeals(await _context.CartMeals
+                .Where(ci => ci.UserId == userId).ToListAsync());
         }
     }
 }

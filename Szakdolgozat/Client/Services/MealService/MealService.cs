@@ -23,11 +23,11 @@ namespace Szakdolgozat.Client.Services.MealService
             return result;
         }
 
-        public async Task GetMeals(string? CategoryUrl = null)
+        public async Task GetMeals(string? categoryUrl = null)
         {
-            var result =  CategoryUrl == null ?
+            var result =  categoryUrl == null ?
                 await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>("api/meal"):                           //itt a kérdőjellel egy if ágat hozol létre mint c-ben 
-                await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>($"api/meal/category/{CategoryUrl}");
+                await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>($"api/meal/category/{categoryUrl}");
             if (result != null && result.Data != null)
                 Meals = result.Data;
 
@@ -48,6 +48,14 @@ namespace Szakdolgozat.Client.Services.MealService
             if (Meals.Count == 0) Message = "No meals found.";
                 MealsChanged?.Invoke();
 
+        }
+
+
+        public async Task<Meal> UpdateProduct(Meal meal)
+        {
+            var result = await _http.PutAsJsonAsync($"api/meal", meal);
+            var content = await result.Content.ReadFromJsonAsync<ServiceResponse<Meal>>();
+            return content.Data;
         }
     }
 }

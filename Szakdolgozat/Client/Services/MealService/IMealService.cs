@@ -15,6 +15,7 @@ namespace Szakdolgozat.Client.Services.MealService
 
         Task<List<string>> GetMealSearchSuggestions(string searchText);
 
+        Task<Meal> UpdateProduct(Meal product);
 
     }
 }

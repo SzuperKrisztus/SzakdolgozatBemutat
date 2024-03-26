@@ -42,8 +42,8 @@
     private async  Task Logout()
     {
         await LocalStorage.RemoveItemAsync("authtoken");
-        await CartService.GetCartMealsCount();
+        //await CartService.GetCartMealsCount();
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("");
     }
 }

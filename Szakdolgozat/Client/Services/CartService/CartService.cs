@@ -11,13 +11,14 @@ namespace Szakdolgozat.Client.Services.CartService
         private readonly ILocalStorageService _localStorage;
         private readonly HttpClient _http;
         private readonly IAuthService _authService;
+       
 
-        public CartService(ILocalStorageService localStorage, HttpClient http, IAuthService authService)
+        public CartService(ILocalStorageService localStorage, HttpClient http, IAuthService authService )
         {
             _localStorage = localStorage;
             _http = http;
             _authService = authService;
-            
+         
         }
 
         public event Action OnChange;
@@ -50,28 +51,28 @@ namespace Szakdolgozat.Client.Services.CartService
                 await _localStorage.SetItemAsync("cart", cart);
             }
 
-            await GetCartMealsCount();
+                //await GetCartMealsCount();
         }
 
-        public async Task GetCartMealsCount()
+
+       /* public async Task GetCartMealsCount()
         {
             if (await _authService.IsUserAuthenticated())
             {
                 var result = await _http.GetFromJsonAsync<ServiceResponse<int>>("api/cart/count");
                 var count = result.Data;
 
-                await _localStorage.SetItemAsync<int>("cartMealsCount", count);
+                await _localStorage.SetItemAsync<int>("cartmealscount", count);
             }
             else
             {
                 var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
-               await _localStorage.SetItemAsync<int>("cartMealsCount", cart != null ? cart.Count : 0);
+               await _localStorage.SetItemAsync<int>("cartmealscount", cart != null ? cart.Count : 0);
             }
 
-            await GetCartMealsCount();
-        }
+            OnChange.Invoke();
+        }*/
 
-     
 
         public async Task<List<CartMealResponseDTO>> GetCartMeals()
         {
@@ -92,21 +93,30 @@ namespace Szakdolgozat.Client.Services.CartService
             }
         }
 
+
         public async Task RemoveMealFromCart(int mealId, int mealTypeId)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
-            if (cart == null)
+            if (await _authService.IsUserAuthenticated())
             {
-                return;
+                await _http.DeleteAsync($"api/cart/{mealId}/{mealTypeId}");
             }
+            else
+            {
+               
+                var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
+                if (cart == null)
+                {
+                    return;
+                }
 
-            var cartItem = cart.Find(x => x.MealId == mealId && x.MealTypeId == mealTypeId);
-            if (cartItem != null)
-            {
-                cart.Remove(cartItem);
-                await _localStorage.SetItemAsync("cart", cart);
-                await GetCartMealsCount();
+                var cartItem = cart.Find(x => x.MealId == mealId && x.MealTypeId == mealTypeId);
+                if (cartItem != null)
+                {
+                    cart.Remove(cartItem);
+                    await _localStorage.SetItemAsync("cart", cart);
+                }
             }
+                    //await GetCartMealsCount();
         }
 
         public async Task StoreCartMeals(bool emptyLocalCart = false)
@@ -127,20 +137,37 @@ namespace Szakdolgozat.Client.Services.CartService
 
         public async Task UpdateQuantity(CartMealResponseDTO meal)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
-            if (cart == null)
+            if(await _authService.IsUserAuthenticated())
             {
-                return;
+                var request = new CartMeal
+                {
+                    MealId = meal.MealId,
+                    MealTypeId = meal.MealTypeId,
+                    Quantity = meal.Quantity
+                };
+                await _http.PutAsJsonAsync("api/cart/update-quantity", request);
             }
-
-            var cartItem = cart.Find(x => x.MealId == meal.MealId && x.MealTypeId == meal.MealTypeId);
-            if (cartItem != null)
+            else
             {
-                cartItem.Quantity = meal.Quantity;
-                await _localStorage.SetItemAsync("cart", cart);
+               
+
+                var cart = await _localStorage.GetItemAsync<List<CartMeal>>("cart");
+                if (cart == null)
+                {
+                    return;
+                }
+
+                var cartItem = cart.Find(x => x.MealId == meal.MealId && x.MealTypeId == meal.MealTypeId);
+                if (cartItem != null)
+                {
+                    cartItem.Quantity = meal.Quantity;
+                    await _localStorage.SetItemAsync("cart", cart);
 
 
-            }
+                }
+            }   
+            
         }
+        
     }
 }

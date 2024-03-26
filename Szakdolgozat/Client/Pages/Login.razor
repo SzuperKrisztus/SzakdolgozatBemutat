@@ -54,9 +54,9 @@
             
             await LocalStorageService.SetItemAsync("authtoken", result.Data);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            //await CartService.StoreCartMeals(true);
-            //await CartService.GetCartMealsCount();
-           NavigationManager.NavigateTo(returnUrl);
+            await CartService.StoreCartMeals(true);
+           // await CartService.GetCartMealsCount();
+            NavigationManager.NavigateTo(returnUrl);
         }
         else
         {
