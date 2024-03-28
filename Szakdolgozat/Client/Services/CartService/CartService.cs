@@ -74,6 +74,8 @@ namespace Szakdolgozat.Client.Services.CartService
         }*/
 
 
+
+
         public async Task<List<CartMealResponseDTO>> GetCartMeals()
         {
             if (await _authService.IsUserAuthenticated())

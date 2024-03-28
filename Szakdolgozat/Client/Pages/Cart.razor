@@ -2,6 +2,7 @@
 @inject ICartService CartService
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@inject IOrderService OrderService
 
 
 
@@ -12,6 +13,10 @@
 @if (cartMeals == null || cartMeals.Count == 0)
 {
     <p>@message</p>
+}
+else if (orderPlaced)
+{
+    <span>Thank you for your order! You can check your orders <a href="orders">here.</a></span>
 }
 else
 {
@@ -47,16 +52,18 @@ else
             Összesen: @cartMeals.Sum(meal => meal.Quantity) db
         </div>
     </div>
-
+    <button @onclick="PlaceOrder" class="btn btn-success float-right mt-1">Rendelés leadása</button>
 }
 
 @code {
         List<CartMealResponseDTO> cartMeals = null;
         string message = "Loading Cart...";
-    bool isAuthenticated = false;
+        bool isAuthenticated = false;
+        bool orderPlaced = false;
 
     protected override async Task OnInitializedAsync()
     {
+        orderPlaced = false;
         isAuthenticated = await AuthService.IsUserAuthenticated();
         await LoadCart();
     }
@@ -83,6 +90,14 @@ else
         if (meal.Quantity < 1)
             meal.Quantity = 1;
         await CartService.UpdateQuantity(meal);
+    }
+
+    private async Task PlaceOrder()
+    {
+       
+        await OrderService.PlaceOrder();
+        //await CartService.GetCartMealsCount();
+        orderPlaced = true;
     }
 
     

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Szakdolgozat.Server.Data;
 
@@ -11,9 +12,10 @@ using Szakdolgozat.Server.Data;
 namespace Szakdolgozat.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240327145813_Orders")]
+    partial class Orders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -421,7 +423,7 @@ namespace Szakdolgozat.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 28, 13, 30, 10, 205, DateTimeKind.Local).AddTicks(9300),
+                            Created = new DateTime(2024, 3, 27, 15, 58, 13, 568, DateTimeKind.Local).AddTicks(3863),
                             Email = "user@user.com",
                             PasswordHash = new byte[] { 1, 2, 3, 4, 5 },
                             PasswordSalt = new byte[] { 1, 2, 3, 4, 5 },

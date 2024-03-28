@@ -1,4 +1,6 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,39 +20,32 @@ namespace Szakdolgozat.Server.Services.AuthService
             _context = context;
             _configuration = configuration;
         }
-
-        public int GetUserId()
+        public  int GetUserId()
         {
-            return int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-           /* var userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            try
+            {
+                var userIdClaim =  _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (!string.IsNullOrEmpty(userIdString))
-            {
-                // Az érték létezik, próbáljuk meg konvertálni int típusúvá
-                if (int.TryParse(userIdString, out int userId))
+                if (userIdClaim == null)
                 {
-                    // A konverzió sikerült, a userId változó tartalmazza a konvertált értéket
-                    // Tehát most meg lehet tenni azokat a lépéseket, amelyeket a helyes felhasználóazonosítóval kell végrehajtani
-                    // Például:
-                     return userId;
-                    // vagy
-                    // return true;
+                    // User not logged in or Claim not available
+                    return -1; // Or another default value
                 }
-                else
-                {
-                    // Nem sikerült az érték konvertálása, valószínűleg nem egész számot tartalmaz
-                    // Ebben az esetben figyelmeztetést vagy naplóbejegyzést lehet készíteni a hibáról
-                    throw new Exception("Nem sikerült az érték konvertálása, valószínűleg nem egész számot tartalmaz");
-                }
+
+                return int.Parse(userIdClaim.Value);
             }
-            else
+            catch (FormatException ex)
             {
-                // Az érték üres vagy null, valami probléma lehet a felhasználó azonosításával
-                // Ebben az esetben figyelmeztetést vagy naplóbejegyzést lehet készíteni a hibáról
-                throw new Exception("Az érték üres vagy null, valami probléma lehet a felhasználó azonosításával");
-               /* int id = 4;
-                return id;
-            } */
+                // Log the exception with relevant details for debugging
+                Console.WriteLine($"Error parsing user ID: {ex.Message}");
+                return -1; // Or another default value
+            }
+            catch (Exception ex)
+            {
+                // Log the general exception for broader error handling
+                Console.WriteLine($"Error getting user ID: {ex.Message}");
+                return -1; // Or another default value
+            }
         }
 
         public async Task<ServiceResponse<string>> Login(string email, string password)
@@ -124,7 +119,8 @@ namespace Szakdolgozat.Server.Services.AuthService
             List<Claim> claims = new List<Claim>
            {
                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-               new Claim(ClaimTypes.Name, user.Email)
+               new Claim(ClaimTypes.Name, user.Email),
+               new Claim(ClaimTypes.Role, user.Role)
            };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8

@@ -4,10 +4,11 @@ global using Szakdolgozat.Client.Services.CartService;
 global using Szakdolgozat.Client.Services.AuthService;
 global using Microsoft.AspNetCore.Components.Authorization;
 global using System.Net.Http.Json;
+global using Szakdolgozat.Client.Services.OrderService;
+global using Szakdolgozat.Client.Services.CategoryService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Szakdolgozat.Client;
-using Szakdolgozat.Client.Services.CategoryService;
 using Blazored.LocalStorage;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -23,5 +24,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<IOrderService , OrderService>();
 
 await builder.Build().RunAsync();

@@ -13,6 +13,9 @@
             modelBuilder.Entity<CartMeal>()
                 .HasKey(c => new { c.UserId,c.MealId, c.MealTypeId });
 
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(o => new { o.OrderId, o.MealId, o.MealTypeId });
+
             modelBuilder.Entity<MealType>().HasData(
                 new MealType { Id = 1, Name = "Vörös bor" },
                 new MealType { Id = 2, Name = "Fehér bor" },
@@ -207,6 +210,10 @@
         public DbSet<User> User { get; set; }
 
         public DbSet<CartMeal> CartMeals { get; set;}
+
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
 
 
 
