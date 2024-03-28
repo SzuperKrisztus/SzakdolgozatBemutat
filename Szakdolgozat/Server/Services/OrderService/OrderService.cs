@@ -16,6 +16,11 @@ namespace Szakdolgozat.Server.Services.OrderService
             _authService = authService;
         }
 
+        public Task<ServiceResponse<List<OrderOverviewResponseDTO>>> GetAdminOrders()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ServiceResponse<OrderDetailsResponseDTO>> GetOrderDetails(int orderId)
         {
             var response = new ServiceResponse<OrderDetailsResponseDTO>();

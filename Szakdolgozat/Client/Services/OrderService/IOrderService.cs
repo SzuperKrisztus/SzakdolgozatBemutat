@@ -7,5 +7,7 @@
         Task<List<OrderOverviewResponseDTO>> GetOrders();
 
         Task<OrderDetailsResponseDTO> GetOrderDetails(int orderId);
+
+        Task<List<OrderOverviewResponseDTO>> GetAdminOrders();
     }
 }

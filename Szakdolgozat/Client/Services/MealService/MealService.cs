@@ -14,8 +14,38 @@ namespace Szakdolgozat.Client.Services.MealService
 
         public List<Meal> Meals { get ; set ; } = new List<Meal>();
         public string Message { get; set; } = "Loading Meals...";
+        public int CurrentPage { get; set; } = 1;
+        public int PageCount { get; set; } = 0;
 
         public event Action MealsChanged;
+        public List<Meal> AdminMeals { get; set; }
+
+
+
+
+        public async Task<Meal> CreateMeal(Meal meal)
+        {
+            var result = await _http.PostAsJsonAsync("api/meal", meal);
+            var newMeal = (await result.Content
+                .ReadFromJsonAsync<ServiceResponse<Meal>>()).Data;
+            return newMeal;
+        }
+
+        public async Task DeleteMeal(Meal meal)
+        {
+            var result = await _http.DeleteAsync($"api/meal/{meal.Id}");
+        }
+
+        public async Task GetAdminMeals()
+        {
+            var result = await _http
+                .GetFromJsonAsync<ServiceResponse<List<Meal>>>("api/meal/admin");
+            AdminMeals = result.Data;
+            if (AdminMeals.Count == 0)
+                Message = "No meals found.";
+        }
+
+
 
         public async Task<ServiceResponse<Meal>> GetMeal(int mealId)
         {
@@ -51,7 +81,7 @@ namespace Szakdolgozat.Client.Services.MealService
         }
 
 
-        public async Task<Meal> UpdateProduct(Meal meal)
+        public async Task<Meal> UpdateMeal(Meal meal)
         {
             var result = await _http.PutAsJsonAsync($"api/meal", meal);
             var content = await result.Content.ReadFromJsonAsync<ServiceResponse<Meal>>();

@@ -1,0 +1,76 @@
+﻿@page "/admin/meal-types"
+@inject IMealTypeService MealTypeService
+@implements IDisposable
+@attribute [Authorize(Roles = "admin")]
+
+<h3>Meal Types</h3>
+
+@foreach (var mealType in MealTypeService.MealTypes)
+{
+    @if (mealType.Editing)
+    {
+        <EditForm Model="editingMealType" OnSubmit="UpdateMealType">
+            <div class="row">
+                <div class="col">
+                    <InputText @bind-Value="editingMealType.Name" class="form-control"></InputText>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="oi oi-cloud-upload"></i>
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col">
+                @mealType.Name
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" @onclick="@(() => EditMealType(mealType))">
+                    <i class="oi oi-pencil"></i>
+                </button>
+            </div>
+        </div>
+    }
+}
+<button class="btn btn-primary" @onclick="CreateNewMealType">
+    <i class="oi oi-plus"></i> Add new meal type
+</button>
+
+@code {
+    MealType editingMealType = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await MealTypeService.GetMealTypes();
+        MealTypeService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        MealTypeService.OnChange -= StateHasChanged;
+    }
+
+    private void EditMealType(MealType mealType)
+    {
+        mealType.Editing = true;
+        editingMealType = mealType;
+    }
+
+    private void CreateNewMealType()
+    {
+        editingMealType = MealTypeService.CreateNewMealType();
+    }
+
+    private async Task UpdateMealType()
+    {
+        if (editingMealType.IsNew)
+            await MealTypeService.AddMealType(editingMealType);
+        else
+            await MealTypeService.UpdateMealType(editingMealType);
+        editingMealType = new MealType();
+    }
+}

@@ -18,6 +18,11 @@ namespace Szakdolgozat.Client.Services.OrderService
             _authService = authService;
         }
 
+        public Task<List<OrderOverviewResponseDTO>> GetAdminOrders()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<OrderDetailsResponseDTO> GetOrderDetails(int orderId)
         {
             var result = await _http.GetFromJsonAsync<ServiceResponse<OrderDetailsResponseDTO>>($"api/order/{orderId}");

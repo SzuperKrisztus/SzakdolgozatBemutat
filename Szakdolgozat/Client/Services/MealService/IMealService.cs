@@ -5,7 +5,8 @@ namespace Szakdolgozat.Client.Services.MealService
     {
         event Action MealsChanged;
         List<Meal> Meals { get; set; }
-
+        List<Meal> AdminMeals { get; set; }
+       
         string Message { get; set; }
         Task GetMeals(string? categoryUrl = null);
 
@@ -15,7 +16,11 @@ namespace Szakdolgozat.Client.Services.MealService
 
         Task<List<string>> GetMealSearchSuggestions(string searchText);
 
-        Task<Meal> UpdateProduct(Meal product);
-
+        Task GetAdminMeals();
+        Task<Meal> CreateMeal(Meal meal);
+        Task<Meal> UpdateMeal(Meal meal);
+        Task DeleteMeal(Meal meal);
     }
+
 }
+

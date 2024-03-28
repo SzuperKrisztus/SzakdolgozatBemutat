@@ -4,18 +4,12 @@
 
 <a href="cart" class="btn btn-info" >
     <i class="oi oi-cart">  </i>
-    <span class="badge">@GetCartCount()</span>
+  
 </a>
 
 @code {
     List<CartMealResponseDTO> cartMeals = null;
-    private int GetCartCount()
-    {
-
-
-        var count  = LocalStorage.GetItem<int>("cartMealsCount");
-        return count ;
-    }
+    
 
     protected override void OnInitialized()
     {
@@ -26,4 +20,7 @@
     {
         CartService.OnChange -= StateHasChanged;
     }
+
+   
+   
 }

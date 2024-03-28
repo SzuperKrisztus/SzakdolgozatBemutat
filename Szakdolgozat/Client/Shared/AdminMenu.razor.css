@@ -1,0 +1,9 @@
+﻿
+.top-row a {
+    margin-left: 0;
+    margin-right: 2px;
+}
+
+.dropdown-item:hover {
+    background-color: white;
+}

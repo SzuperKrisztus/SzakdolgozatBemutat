@@ -1,0 +1,85 @@
+﻿@page "/admin/meal"
+@inject IMealService MealService
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "admin")]
+
+<h3>Meals</h3>
+
+@if (MealService.AdminMeals == null)
+{
+    <span>Loading Meals...</span>
+}
+else
+{
+    <button class="btn btn-primary float-end" @onclick="CreateMeal">
+        <i class="oi oi-plus"></i> Add new meal
+    </button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Meal</th>
+                <th>Variant</th>
+                <th>Price</th>
+                <th>Visible</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="MealService.AdminMeals" Context="meal">
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(meal.ImageUrl))
+                    {
+                        <img src="@meal.ImageUrl" />
+                    }
+                    else if (meal.Images.Count > 0)
+                    {
+                        <img src="@meal.Images[0].Data" />
+                    }
+                </td>
+                <td>@meal.Name</td>
+                <td>
+                    @foreach (var variant in meal.Variants)
+                    {
+                        <span>@variant.MealType.Name</span>
+
+                        <br />
+                    }
+                </td>
+                <td>
+                    @foreach (var variant in meal.Variants)
+                    {
+                        <span>@variant.Price</span>
+
+                        <br />
+                    }
+                </td>
+                <td>@(meal.Visible ? "✔️" : "")</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => EditMeal(meal.Id))">
+                        <i class="oi oi-pencil"></i>
+                    </button>
+                </td>
+            </tr>
+        </Virtualize>
+    </tbody>
+</table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await MealService.GetAdminMeals();
+    }
+
+    void EditMeal(int mealId)
+    {
+        NavigationManager.NavigateTo($"admin/meal/{mealId}");
+    }
+
+    void CreateMeal()
+    {
+        NavigationManager.NavigateTo("admin/meals");
+    }
+}

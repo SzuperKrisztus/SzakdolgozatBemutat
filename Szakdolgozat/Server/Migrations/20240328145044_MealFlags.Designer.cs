@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Szakdolgozat.Server.Data;
 
@@ -11,9 +12,10 @@ using Szakdolgozat.Server.Data;
 namespace Szakdolgozat.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240328145044_MealFlags")]
+    partial class MealFlags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,28 +94,6 @@ namespace Szakdolgozat.Server.Migrations
                             Url = "drink",
                             Visible = true
                         });
-                });
-
-            modelBuilder.Entity("Szakdolgozat.Shared.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealId");
-
-                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Szakdolgozat.Shared.Meal", b =>
@@ -301,17 +281,11 @@ namespace Szakdolgozat.Server.Migrations
                     b.Property<int>("MealTypeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<decimal>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("bit");
 
                     b.HasKey("MealId", "MealTypeId");
 
@@ -324,91 +298,71 @@ namespace Szakdolgozat.Server.Migrations
                         {
                             MealId = 4,
                             MealTypeId = 3,
-                            Deleted = false,
                             OriginalPrice = 800.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 4,
                             MealTypeId = 4,
-                            Deleted = false,
                             OriginalPrice = 800.00m,
-                            Price = 1200.00m,
-                            Visible = true
+                            Price = 1200.00m
                         },
                         new
                         {
                             MealId = 5,
                             MealTypeId = 1,
-                            Deleted = false,
                             OriginalPrice = 0.00m,
-                            Price = 400.00m,
-                            Visible = true
+                            Price = 400.00m
                         },
                         new
                         {
                             MealId = 5,
                             MealTypeId = 2,
-                            Deleted = false,
                             OriginalPrice = 0.00m,
-                            Price = 300.00m,
-                            Visible = true
+                            Price = 300.00m
                         },
                         new
                         {
                             MealId = 6,
                             MealTypeId = 5,
-                            Deleted = false,
                             OriginalPrice = 1000.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 6,
                             MealTypeId = 6,
-                            Deleted = false,
                             OriginalPrice = 1000.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 6,
                             MealTypeId = 7,
-                            Deleted = false,
                             OriginalPrice = 1000.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 1,
                             MealTypeId = 8,
-                            Deleted = false,
                             OriginalPrice = 2500m,
-                            Price = 2500m,
-                            Visible = true
+                            Price = 2500m
                         },
                         new
                         {
                             MealId = 2,
                             MealTypeId = 9,
-                            Deleted = false,
                             OriginalPrice = 2200m,
-                            Price = 2200m,
-                            Visible = true
+                            Price = 2200m
                         },
                         new
                         {
                             MealId = 3,
                             MealTypeId = 10,
-                            Deleted = false,
                             OriginalPrice = 2300m,
-                            Price = 2300m,
-                            Visible = true
+                            Price = 2300m
                         });
                 });
 
@@ -499,19 +453,12 @@ namespace Szakdolgozat.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 28, 16, 38, 27, 678, DateTimeKind.Local).AddTicks(4404),
+                            Created = new DateTime(2024, 3, 28, 15, 50, 44, 429, DateTimeKind.Local).AddTicks(3837),
                             Email = "user@user.com",
                             PasswordHash = new byte[] { 1, 2, 3, 4, 5 },
                             PasswordSalt = new byte[] { 1, 2, 3, 4, 5 },
                             Role = "user"
                         });
-                });
-
-            modelBuilder.Entity("Szakdolgozat.Shared.Image", b =>
-                {
-                    b.HasOne("Szakdolgozat.Shared.Meal", null)
-                        .WithMany("Images")
-                        .HasForeignKey("MealId");
                 });
 
             modelBuilder.Entity("Szakdolgozat.Shared.Meal", b =>
@@ -573,8 +520,6 @@ namespace Szakdolgozat.Server.Migrations
 
             modelBuilder.Entity("Szakdolgozat.Shared.Meal", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("Variants");
                 });
 

@@ -7,5 +7,7 @@
 
         
         Task<ServiceResponse<OrderDetailsResponseDTO>> GetOrderDetails(int orderId);
+
+        Task<ServiceResponse<List<OrderOverviewResponseDTO>>> GetAdminOrders();
     }
 }

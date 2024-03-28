@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Szakdolgozat.Server.Data;
 
@@ -11,9 +12,10 @@ using Szakdolgozat.Server.Data;
 namespace Szakdolgozat.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240328131230_CategoryTableUpdate")]
+    partial class CategoryTableUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,28 +96,6 @@ namespace Szakdolgozat.Server.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Szakdolgozat.Shared.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealId");
-
-                    b.ToTable("Images");
-                });
-
             modelBuilder.Entity("Szakdolgozat.Shared.Meal", b =>
                 {
                     b.Property<int>("Id")
@@ -131,9 +111,6 @@ namespace Szakdolgozat.Server.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -145,9 +122,6 @@ namespace Szakdolgozat.Server.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -161,66 +135,54 @@ namespace Szakdolgozat.Server.Migrations
                             Id = 1,
                             Allergen = "Laktóz, glutén",
                             CategoryId = 1,
-                            Deleted = false,
                             Description = "Durum spaghetti tészta, paradicsomos marha raguval és parmezánnal",
                             ImageUrl = "https://supervalu.ie/thumbnail/800x600/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
-                            Name = "Bolgonai Spaghetti",
-                            Visible = true
+                            Name = "Bolgonai Spaghetti"
                         },
                         new
                         {
                             Id = 2,
                             Allergen = "Glutén, Tojás, Laktóz",
                             CategoryId = 1,
-                            Deleted = false,
                             Description = "Durum spaghetti tészta, tojásos pecorino romano öntettel guanchaleval",
                             ImageUrl = "https://www.sipandfeast.com/wp-content/uploads/2022/09/spaghetti-carbonara-recipe-snippet.jpg",
-                            Name = "Carbonara Spaghetti",
-                            Visible = true
+                            Name = "Carbonara Spaghetti"
                         },
                         new
                         {
                             Id = 3,
                             Allergen = "laktóz, glutén",
                             CategoryId = 1,
-                            Deleted = false,
                             Description = "Nápolyi pizza paradicsomos alappal, bazsalikommal bölény mozzarellával olivaolajjal",
                             ImageUrl = "https://assets.biggreenegg.eu/app/uploads/2018/06/28115815/topimage-pizza-special17-800x500.jpg",
-                            Name = "Margherita Pizza",
-                            Visible = true
+                            Name = "Margherita Pizza"
                         },
                         new
                         {
                             Id = 4,
                             Allergen = "Alkohol",
                             CategoryId = 3,
-                            Deleted = false,
                             Description = "0,5 Liter csapolt sör",
                             ImageUrl = "https://proaktivdirekt.com/adaptive/article_md/upload/images/magazine/sor.jpg",
-                            Name = "Sör",
-                            Visible = true
+                            Name = "Sör"
                         },
                         new
                         {
                             Id = 5,
                             Allergen = "alkohol",
                             CategoryId = 3,
-                            Deleted = false,
                             Description = "A frizbiolaj pincészet külömböző típusú borai az ár dl-ben értendő",
                             ImageUrl = "https://joopince.hu/wp-content/uploads/2022/02/bor-fajtak.jpg",
-                            Name = "Bor",
-                            Visible = true
+                            Name = "Bor"
                         },
                         new
                         {
                             Id = 6,
                             Allergen = "nincs, kivéve az aktuális gyömölcs",
                             CategoryId = 3,
-                            Deleted = false,
                             Description = "Házi limonádi valódi gyümölcsből",
                             ImageUrl = "https://receptneked.hu/wp-content/uploads/2020/08/104237976_s.jpg",
-                            Name = "Limonádé",
-                            Visible = true
+                            Name = "Limonádé"
                         });
                 });
 
@@ -301,17 +263,11 @@ namespace Szakdolgozat.Server.Migrations
                     b.Property<int>("MealTypeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<decimal>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("bit");
 
                     b.HasKey("MealId", "MealTypeId");
 
@@ -324,91 +280,71 @@ namespace Szakdolgozat.Server.Migrations
                         {
                             MealId = 4,
                             MealTypeId = 3,
-                            Deleted = false,
                             OriginalPrice = 800.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 4,
                             MealTypeId = 4,
-                            Deleted = false,
                             OriginalPrice = 800.00m,
-                            Price = 1200.00m,
-                            Visible = true
+                            Price = 1200.00m
                         },
                         new
                         {
                             MealId = 5,
                             MealTypeId = 1,
-                            Deleted = false,
                             OriginalPrice = 0.00m,
-                            Price = 400.00m,
-                            Visible = true
+                            Price = 400.00m
                         },
                         new
                         {
                             MealId = 5,
                             MealTypeId = 2,
-                            Deleted = false,
                             OriginalPrice = 0.00m,
-                            Price = 300.00m,
-                            Visible = true
+                            Price = 300.00m
                         },
                         new
                         {
                             MealId = 6,
                             MealTypeId = 5,
-                            Deleted = false,
                             OriginalPrice = 1000.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 6,
                             MealTypeId = 6,
-                            Deleted = false,
                             OriginalPrice = 1000.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 6,
                             MealTypeId = 7,
-                            Deleted = false,
                             OriginalPrice = 1000.00m,
-                            Price = 1000.00m,
-                            Visible = true
+                            Price = 1000.00m
                         },
                         new
                         {
                             MealId = 1,
                             MealTypeId = 8,
-                            Deleted = false,
                             OriginalPrice = 2500m,
-                            Price = 2500m,
-                            Visible = true
+                            Price = 2500m
                         },
                         new
                         {
                             MealId = 2,
                             MealTypeId = 9,
-                            Deleted = false,
                             OriginalPrice = 2200m,
-                            Price = 2200m,
-                            Visible = true
+                            Price = 2200m
                         },
                         new
                         {
                             MealId = 3,
                             MealTypeId = 10,
-                            Deleted = false,
                             OriginalPrice = 2300m,
-                            Price = 2300m,
-                            Visible = true
+                            Price = 2300m
                         });
                 });
 
@@ -499,19 +435,12 @@ namespace Szakdolgozat.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 28, 16, 38, 27, 678, DateTimeKind.Local).AddTicks(4404),
+                            Created = new DateTime(2024, 3, 28, 14, 12, 30, 460, DateTimeKind.Local).AddTicks(6042),
                             Email = "user@user.com",
                             PasswordHash = new byte[] { 1, 2, 3, 4, 5 },
                             PasswordSalt = new byte[] { 1, 2, 3, 4, 5 },
                             Role = "user"
                         });
-                });
-
-            modelBuilder.Entity("Szakdolgozat.Shared.Image", b =>
-                {
-                    b.HasOne("Szakdolgozat.Shared.Meal", null)
-                        .WithMany("Images")
-                        .HasForeignKey("MealId");
                 });
 
             modelBuilder.Entity("Szakdolgozat.Shared.Meal", b =>
@@ -573,8 +502,6 @@ namespace Szakdolgozat.Server.Migrations
 
             modelBuilder.Entity("Szakdolgozat.Shared.Meal", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("Variants");
                 });
 
