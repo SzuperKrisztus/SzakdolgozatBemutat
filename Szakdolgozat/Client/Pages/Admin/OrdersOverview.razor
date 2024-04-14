@@ -1,38 +1,75 @@
-﻿@page "/admin/ordersoverview"
+﻿@page "/admin/order"
 @inject IOrderService OrderService
-<h3>OrdersOverview</h3>
+@inject NavigationManager Navigation
+
+<h3>Orders Overview</h3>
 
 @if (orders == null)
 {
-    <span>Loading yourt orders...</span>
+    <span>Rendelések betöltése...</span>
 }
-@if (orders.Count <= 0)
+else if (orders.Count <= 0)
 {
-    <span>You have no orders, yet.</span>
+    <span>Jelenleg nincsenek rendelések.</span>
 }
 else
 {
-    foreach (var order in orders)
-    {
-        <div class="container">
-            <div class="image-wrapper">
-                <img src="@order.MealImageUrl" class="image" />
+    <div>
+        @foreach (var order in orders)
+        {
+            <div class="container">
+                <div class="image-wrapper">
+                    <img src="@order.MealImageUrl" class="image" />
+                </div>
+                <div class="details">
+                    <h4>@order.Meal</h4>
+                    <span>@order.OrderDate</span><br />
+                    <div class="order-price">@order.TotalPrice Ft.</div>
+                    <div class="order-status">@order.Status</div>
+                    <div>
+                        <button class="status-button" @onclick="() => InPreparation(order.Id)">Készül</button>
+                        <button class="status-button" @onclick=" () => WaitingForPayment(order.Id)">Fizetésre vár</button>
+                        <button class="status-button" @onclick="() => Payed(order.Id)">Kifizetve</button>
+                    </div>
+                    
+                    <a href="orders/@order.Id">Mutass többet...</a>
+                </div>
             </div>
-            <div class="details">
-                <h4> @order.Meal</h4>
-                <span>@order.OrderDate</span><br />
-                <a href="orders/@order.Id">Show more...</a>
-            </div>
-            <div class="order-price">@order.TotalPrice Ft.</div>
-        </div>
-    }
+        }
+    </div>
 }
-
 @code {
 
     List<OrderOverviewResponseDTO> orders = null;
 
+    protected override async Task OnInitializedAsync() => orders = await OrderService.GetAdminOrders();
 
-    protected override async Task OnInitializedAsync() => orders = await OrderService.GetOrders();
-
+    private async Task UpdateOrderStatus(int orderId, string newStatus)
+    {
+        var response = await OrderService.UpdateStatus(orderId, newStatus);
+        if (response.Success)
+        {
+            // Frissítjük az oldalt, hogy a változások megjelenjenek
+            orders = await OrderService.GetAdminOrders();
+            StateHasChanged();
+        }
+        else
+        {
+            // Hibakezelés, ha a státusz frissítése nem sikerült
+            Console.WriteLine($"Hiba történt a státusz frissítésekor: {response.Message}");
+        }
+    }
+    
+    private void InPreparation(int orderId)
+    {
+        UpdateOrderStatus(orderId, "Készül");
+    }
+    private void WaitingForPayment(int orderId)
+    {
+        UpdateOrderStatus(orderId, "Fizetésre vár");
+    }
+    private void Payed(int orderId)
+    {
+        UpdateOrderStatus(orderId, "Kifizetve");
+    }
 }

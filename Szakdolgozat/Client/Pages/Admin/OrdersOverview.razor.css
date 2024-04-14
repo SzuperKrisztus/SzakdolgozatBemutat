@@ -1,0 +1,45 @@
+﻿.container {
+    display: flex;
+    padding: 6px;
+    border: 1px solid;
+    border-color: lightgray;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.image-wrapper {
+    width: 100px;
+    text-align: center;
+}
+
+.image {
+    max-height: 250px;
+    max-width: 250px;
+    padding: 6px;
+}
+
+.details {
+    flex-grow: 1;
+    padding: 1.2em;
+    text-align: right;
+}
+.status-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+    .status-button:hover {
+        background-color: #0056b3;
+    }
+
+    .status-button:active {
+        background-color: #004080;
+    }

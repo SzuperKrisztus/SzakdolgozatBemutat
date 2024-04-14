@@ -3,37 +3,37 @@
 
 <h3>Orders</h3>
 
-@if (orders == null)
+@if (o == null)
 {
-    <span>Loading yourt orders...</span>
+    <span>Rendeléseid betöltése...</span>
 }
-@if (orders.Count <= 0)
+@if (o.Count <= 0)
 {
-    <span>You have no orders, yet.</span>
+    <span>Jelenleg nincs rendelésed.</span>
 }
 else
 {
-    foreach (var order in orders)
+    foreach (var order in o)
     {
         <div class="container">
             <div class="image-wrapper">
                 <img src="@order.MealImageUrl" class="image" />
             </div>
             <div class="details">
-                <h4> @order.Meal</h4>
+                <h4>@order.Meal</h4>
                 <span>@order.OrderDate</span><br />
-                <a href="orders/@order.Id">Show more...</a>
+                <a href="orders/@order.Id">Mutass többet...</a>
+                <div class="order-price">@order.TotalPrice Ft.</div>
             </div>
-            <div class="order-price">@order.TotalPrice Ft.</div>
         </div>
     }
 }
 
 @code {
 
-    List<OrderOverviewResponseDTO> orders = null;
+    List<OrderOverviewResponseDTO> o = null;
 
 
-    protected override async Task OnInitializedAsync() => orders = await OrderService.GetOrders();
+    protected override async Task OnInitializedAsync() => o = await OrderService.GetOrders();
 
 }

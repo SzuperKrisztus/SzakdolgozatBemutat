@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Szakdolgozat.Server.Controllers
@@ -21,6 +22,13 @@ namespace Szakdolgozat.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("admin"), Authorize(Roles = "admin")]
+        public async Task<ActionResult<ServiceResponse<List<OrderOverviewResponseDTO>>>> GetAdminOrders()
+        {
+            var result = await _orderService.GetAdminOrders();
+            return Ok(result);
+        }
+
         [HttpGet("{orderId}")]
         public async Task<ActionResult<ServiceResponse<List<OrderDetailsResponseDTO>>>> GetOrderDetails(int orderId)
         {
@@ -35,8 +43,28 @@ namespace Szakdolgozat.Server.Controllers
             return Ok(result);
         }
 
+       
         
+        [HttpPut("update-status")]
+        public async Task<ActionResult<ServiceResponse<bool>>> UpdateOrderStatus([FromBody] UpdateOrderStatusRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var response = await _orderService.UpdateStatus(request.OrderId, request.NewStatus);
+            return Ok(response);
+        }
     }
+
+    public class UpdateOrderStatusRequest
+    {
+        public int OrderId { get; set; }
+        public string NewStatus { get; set; }
+    }
+        
+    
 }
+
 

@@ -4,60 +4,46 @@
 @inject NavigationManager NavigationManager
 @inject IOrderService OrderService
 
-
-
 <PageTitle>Kosár</PageTitle>
-
-<h3>Kosár</h3>
 
 @if (cartMeals == null || cartMeals.Count == 0)
 {
-    <p>@message</p>
-}
-else if (orderPlaced)
-{
-    <span>Thank you for your order! You can check your orders <a href="orders">here.</a></span>
+    <span>@message</span>
 }
 else
 {
-    <div class="cart-container">
-        <div class="cart-items">
-            @foreach (var meal in cartMeals)
-            {
-                <div class="cart-item">
-                    <div class="image-wrapper">
-                        <img src="@meal.ImageUrl" class="image" />
-                    </div>
-                    <div class="details">
-                        <div class="name-price">
-                            <h5><a href="/meal/@meal.MealId">@meal.Name</a></h5>
-                            <div class="price">@meal.MealType </div>
-                            <input type="number" value="@meal.Quantity"
-                                   @onchange="@((ChangeEventArgs eventArgs) => UpdateQuantity(eventArgs,meal))"
-                                class="form-control, input-quantity"
-                                min="1"/>
-                            <div class="price">@(meal.Price * meal.Quantity) Ft</div>
-                        </div>
-                        <button class="remove-from-cart" @onclick="@( () => RemoveMealFromCart(meal.MealId, meal.MealTypeId) )">
-                            Delete
-                        </button>
-                    </div>
+    <div>
+        @foreach (var product in cartMeals)
+        {
+            <div class="container">
+                <div class="image-wrapper">
+                    <img src="@product.ImageUrl" class="image" />
                 </div>
-            }
-        </div>
-        <div class="cart-total">
-            Összesen: @cartMeals.Sum(meal => meal.Price * meal.Quantity) Ft
-        </div>
-        <div class="cart-total">
-            Összesen: @cartMeals.Sum(meal => meal.Quantity) db
+                <div class="name">
+                    <h5><a href="/product/@product.MealId">@product.Name</a></h5>
+                    <span>@product.MealType</span><br />
+                    <input type="number" value="@product.Quantity"
+                   @onchange="@((ChangeEventArgs e) => UpdateQuantity(e, product))"
+                   class="form-control input-quantity"
+                   min="1" />
+                    <button class="btn-delete" @onclick="@(() =>
+                        RemoveMealFromCart(product.MealId, product.MealTypeId))">
+                        Törlés
+                    </button>
+                </div>
+                <div class="cart-product-price">@(product.Price * product.Quantity) Ft.</div>
+            </div>
+        }
+        <div class="cart-product-price">
+            Összesen (@cartMeals.Sum(product => 1* product.Quantity)): @cartMeals.Sum(product => @product.Price * product.Quantity) Ft.
         </div>
     </div>
-    <button @onclick="PlaceOrder" class="btn btn-success float-right mt-1">Rendelés leadása</button>
-}
 
+    <button @onclick="PlaceOrder" class="btn alert-success float-end mt-1">Megrendelés</button>
+}
 @code {
         List<CartMealResponseDTO> cartMeals = null;
-        string message = "Loading Cart...";
+        string message = "Kosár betöltése...";
         bool isAuthenticated = false;
         bool orderPlaced = false;
 

@@ -75,12 +75,12 @@ namespace Szakdolgozat.Server.Services.MealService
             var response = new ServiceResponse<Meal>();
             Meal meal = null;
 
-            if(_httpContextAccessor.HttpContext.User.IsInRole("admin"))
+            if (_httpContextAccessor.HttpContext.User.IsInRole("admin"))
             {
                 meal = await _context.Meals
                 .Include(p => p.Variants.Where(v => !v.Deleted))
                 .ThenInclude(v => v.MealType)
-                .FirstOrDefaultAsync(p => p.Id == mealId &&  !p.Deleted);
+                .FirstOrDefaultAsync(p => p.Id == mealId && !p.Deleted);
             }
             else
             {
@@ -89,8 +89,8 @@ namespace Szakdolgozat.Server.Services.MealService
                 .ThenInclude(v => v.MealType)
                 .FirstOrDefaultAsync(p => p.Id == mealId && p.Visible && !p.Deleted);
             }
-           
-            
+
+
             if (meal == null)
             {
                 response.Success = false;
@@ -144,7 +144,7 @@ namespace Szakdolgozat.Server.Services.MealService
         {
             return await _context.Meals
                                 .Where(p => p.Name.ToLower().Contains(searchText.ToLower()) ||
-                                    p.Description.ToLower().Contains(searchText.ToLower()) || 
+                                    p.Description.ToLower().Contains(searchText.ToLower()) ||
                                     p.Allergen.ToLower().Contains(searchText.ToLower()) && p.Visible && !p.Deleted)
                                 .Include(p => p.Variants)
                                 .ToListAsync();
@@ -172,7 +172,7 @@ namespace Szakdolgozat.Server.Services.MealService
             dbMeal.ImageUrl = meal.ImageUrl;
             dbMeal.CategoryId = meal.CategoryId;
             dbMeal.Visible = meal.Visible;
-            
+
 
             var mealImages = dbMeal.Images;
             _context.Images.RemoveRange(mealImages);

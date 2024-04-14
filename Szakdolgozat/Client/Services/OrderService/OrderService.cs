@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Components;
+using System.Text;
 
 namespace Szakdolgozat.Client.Services.OrderService
 {
@@ -18,9 +19,18 @@ namespace Szakdolgozat.Client.Services.OrderService
             _authService = authService;
         }
 
-        public Task<List<OrderOverviewResponseDTO>> GetAdminOrders()
+        public event Action OnChange;
+
+        public List<OrderOverviewResponseDTO> AdminOrders { get; set; }
+        public string Message { get; set; } = "Rendelések betöltése...";
+       
+
+       public async Task<List<OrderOverviewResponseDTO>> GetAdminOrders()
         {
-            throw new NotImplementedException();
+            var result = await _http
+                .GetFromJsonAsync<ServiceResponse<List<OrderOverviewResponseDTO>>>("api/order/admin");
+           
+            return  result.Data;
         }
 
         public async Task<OrderDetailsResponseDTO> GetOrderDetails(int orderId)
@@ -50,5 +60,46 @@ namespace Szakdolgozat.Client.Services.OrderService
         {
             return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
         }
+
+        public async Task<ServiceResponse<bool>> UpdateStatus(int orderId, string newStatus)
+        {
+            var response = new ServiceResponse<bool>();
+
+            try
+            {
+                var request = new UpdateStatusRequest
+                {
+                    newStatus = newStatus,
+                    orderId = orderId
+                };
+
+                HttpResponseMessage httpResponse = await _http.PutAsJsonAsync("api/order/update-status", request);
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    response = await httpResponse.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = $"Server returned error: {httpResponse.StatusCode}";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error updating order status: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        private class UpdateStatusRequest
+        {
+            public string newStatus { get; set; }
+            public int orderId { get; set; }
+        }
+
+
     }
 }

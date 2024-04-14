@@ -8,7 +8,7 @@ namespace Szakdolgozat.Server.Services.OrderService
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthService _authService;
 
-        public OrderService(DataContext context, ICartService cartService,IHttpContextAccessor httpContextAccessor, IAuthService authService )
+        public OrderService(DataContext context, ICartService cartService, IHttpContextAccessor httpContextAccessor, IAuthService authService)
         {
             _context = context;
             _cartService = cartService;
@@ -16,9 +16,32 @@ namespace Szakdolgozat.Server.Services.OrderService
             _authService = authService;
         }
 
-        public Task<ServiceResponse<List<OrderOverviewResponseDTO>>> GetAdminOrders()
+        public async Task<ServiceResponse<List<OrderOverviewResponseDTO>>> GetAdminOrders()
         {
-            throw new NotImplementedException();
+            var response = new ServiceResponse<List<OrderOverviewResponseDTO>>();
+
+            // Remove the filtering by user ID
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Meal)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            var orderResponse = new List<OrderOverviewResponseDTO>();
+            orders.ForEach(o => orderResponse.Add(new OrderOverviewResponseDTO
+            {
+                Id = o.Id,
+                OrderDate = o.OrderDate,
+                TotalPrice = o.TotalPrice,
+                Status = o.Status,
+                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} and " +
+                                             $"{o.OrderItems.Count - 1} more..." :
+                                             o.OrderItems.First().Meal.Name,
+                MealImageUrl = o.OrderItems.First().Meal.ImageUrl
+            }));
+
+            response.Data = orderResponse;
+            return response;
         }
 
         public async Task<ServiceResponse<OrderDetailsResponseDTO>> GetOrderDetails(int orderId)
@@ -80,7 +103,7 @@ namespace Szakdolgozat.Server.Services.OrderService
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
-                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} and "  +
+                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} and " +
                 $"{o.OrderItems.Count - 1} more..." :
                 o.OrderItems.First().Meal.Name,
                 MealImageUrl = o.OrderItems.First().Meal.ImageUrl
@@ -90,7 +113,7 @@ namespace Szakdolgozat.Server.Services.OrderService
             return response;
         }
 
-       
+
 
         public async Task<ServiceResponse<bool>> PlaceOrder()
         {
@@ -124,6 +147,36 @@ namespace Szakdolgozat.Server.Services.OrderService
             await _context.SaveChangesAsync();
 
             return new ServiceResponse<bool> { Data = true };
+        }
+
+        public async Task<ServiceResponse<bool>> UpdateStatus(int orderId, string newStatus)
+        {
+            var response = new ServiceResponse<bool>();
+
+            try
+            {
+                var order = await _context.Orders.Where(o => o.Id == orderId).FirstOrDefaultAsync();
+
+                if (order == null)
+                {
+                    response.Success = false;
+                    response.Message = "Order not found.";
+                    return response;
+                }
+
+                order.Status = newStatus;
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+
+                response.Data = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error updating order status: {ex.Message}";
+            }
+
+            return response;
         }
     }
 }

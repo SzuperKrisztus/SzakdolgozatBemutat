@@ -12,7 +12,7 @@ namespace Szakdolgozat.Client.Services.MealService
             _http = http;
         }
 
-        public List<Meal> Meals { get ; set ; } = new List<Meal>();
+        public List<Meal> Meals { get; set; } = new List<Meal>();
         public string Message { get; set; } = "Loading Meals...";
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
@@ -55,8 +55,8 @@ namespace Szakdolgozat.Client.Services.MealService
 
         public async Task GetMeals(string? categoryUrl = null)
         {
-            var result =  categoryUrl == null ?
-                await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>("api/meal"):                           //itt a kérdőjellel egy if ágat hozol létre mint c-ben 
+            var result = categoryUrl == null ?
+                await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>("api/meal") :                           //itt a kérdőjellel egy if ágat hozol létre mint c-ben 
                 await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>($"api/meal/category/{categoryUrl}");
             if (result != null && result.Data != null)
                 Meals = result.Data;
@@ -76,7 +76,7 @@ namespace Szakdolgozat.Client.Services.MealService
             if (result != null && result.Data != null)
                 Meals = result.Data;
             if (Meals.Count == 0) Message = "No meals found.";
-                MealsChanged?.Invoke();
+            MealsChanged?.Invoke();
 
         }
 
