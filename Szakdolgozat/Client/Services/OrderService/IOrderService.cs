@@ -12,7 +12,13 @@ namespace Szakdolgozat.Client.Services.OrderService
 
         Task<OrderDetailsResponseDTO> GetOrderDetails(int orderId);
 
+        Task<ServiceResponse<OrderOverviewResponseDTO>> GetAdminOrderDetails(int orderId);
         Task<List<OrderOverviewResponseDTO>> GetAdminOrders();
         Task<ServiceResponse<bool>> UpdateStatus(int orderId, string newStatus);
+
+        Task<ServiceResponse<bool>> DeleteOrder(int orderId);
+
+
+
     }
 }

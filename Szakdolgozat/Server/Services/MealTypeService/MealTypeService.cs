@@ -32,7 +32,7 @@
                 return new ServiceResponse<List<MealType>>
                 {
                     Success = false,
-                    Message = "Meal Type not found."
+                    Message = "Az étel típus nem található"
                 };
             }
 

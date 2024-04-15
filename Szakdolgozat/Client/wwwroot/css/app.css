@@ -75,3 +75,8 @@ a, .btn-link {
 .media-body {
     flex:1;
 }
+
+.order-price {
+    color: green;
+    font-weight: bold;
+}

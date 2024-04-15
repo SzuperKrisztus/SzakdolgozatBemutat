@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using Microsoft.JSInterop;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Szakdolgozat.Shared;
 
 namespace Szakdolgozat.Client.Services.MealService
@@ -29,11 +31,28 @@ namespace Szakdolgozat.Client.Services.MealService
             var newMeal = (await result.Content
                 .ReadFromJsonAsync<ServiceResponse<Meal>>()).Data;
             return newMeal;
+
+            
         }
 
-        public async Task DeleteMeal(Meal meal)
+        public async Task<string> DeleteMeal(Meal meal)
         {
             var result = await _http.DeleteAsync($"api/meal/{meal.Id}");
+            var deleteSuccession = result.Content;
+            // Ellenőrizzük a választ
+            if (deleteSuccession != null && deleteSuccession != null)
+            {
+                string jsonContent = await deleteSuccession.ReadAsStringAsync();
+                var jsonObject = JsonSerializer.Deserialize<JsonElement>(jsonContent);
+
+                if (jsonObject.TryGetProperty("message", out var messageProperty))
+                {
+                    return messageProperty.ToString();
+                }
+                return "Hibás válasz.";
+            }
+            return string.Empty;
+
         }
 
         public async Task GetAdminMeals()
@@ -42,7 +61,7 @@ namespace Szakdolgozat.Client.Services.MealService
                 .GetFromJsonAsync<ServiceResponse<List<Meal>>>("api/meal/admin");
             AdminMeals = result.Data;
             if (AdminMeals.Count == 0)
-                Message = "No meals found.";
+                Message = "Nincs ilyen étel.";
         }
 
 
@@ -75,7 +94,7 @@ namespace Szakdolgozat.Client.Services.MealService
             var result = await _http.GetFromJsonAsync<ServiceResponse<List<Meal>>>($"api/meal/search/{searchText}");
             if (result != null && result.Data != null)
                 Meals = result.Data;
-            if (Meals.Count == 0) Message = "No meals found.";
+            if (Meals.Count == 0) Message = "Nincs ilyen étel.";
             MealsChanged?.Invoke();
 
         }

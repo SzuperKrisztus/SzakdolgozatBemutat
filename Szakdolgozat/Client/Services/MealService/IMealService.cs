@@ -19,7 +19,7 @@ namespace Szakdolgozat.Client.Services.MealService
         Task GetAdminMeals();
         Task<Meal> CreateMeal(Meal meal);
         Task<Meal> UpdateMeal(Meal meal);
-        Task DeleteMeal(Meal meal);
+        Task<string> DeleteMeal(Meal meal);
     }
 
 }

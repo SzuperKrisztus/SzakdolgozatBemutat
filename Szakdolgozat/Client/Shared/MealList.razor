@@ -56,9 +56,9 @@ else
         else if (variants.Count == 1)
         {
             
-            return (variants[0].OriginalPrice) + " Ft.";
+            return (variants[0].OriginalPrice.ToString("0.##")) + " Ft.";
         }
         decimal minPrice = variants.Min(v => v.Price);
-        return "Starting at " + minPrice + " Ft.";
+        return  minPrice.ToString("0.##") + " Ft-tól kezdve.";
     }
 }

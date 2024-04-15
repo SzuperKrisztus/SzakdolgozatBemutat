@@ -31,11 +31,11 @@ else{
             @if (GetSelectedVariant().OriginalPrice > GetSelectedVariant().Price)
             {
                 <h6 class="text-muted original-price">
-                    @GetSelectedVariant().OriginalPrice Ft.
+                    @GetSelectedVariant().OriginalPrice.ToString("0.##") Ft.
                 </h6>
             }
             <h4 class="price">
-                @GetSelectedVariant().Price Ft.
+                @GetSelectedVariant().Price.ToString("0.##") Ft.
             </h4>
         }
         <button class="btn btn-primary" @onclick="AddToCart">

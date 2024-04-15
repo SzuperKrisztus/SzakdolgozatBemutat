@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Text;
+using Szakdolgozat.Shared;
 
 namespace Szakdolgozat.Client.Services.OrderService
 {
@@ -38,6 +40,9 @@ namespace Szakdolgozat.Client.Services.OrderService
             var result = await _http.GetFromJsonAsync<ServiceResponse<OrderDetailsResponseDTO>>($"api/order/{orderId}");
             return result.Data;
         }
+      
+
+      
 
         public async Task<List<OrderOverviewResponseDTO>> GetOrders()
         {
@@ -101,5 +106,37 @@ namespace Szakdolgozat.Client.Services.OrderService
         }
 
 
+
+        public async Task<ServiceResponse<bool>> DeleteOrder(int orderId)
+        {
+            var response = new ServiceResponse<bool>();
+
+            try
+            {
+                var result = await _http.DeleteAsync($"api/order/{orderId}");
+
+                if (result.IsSuccessStatusCode)
+                {
+                    response.Data = true;
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Error deleting order.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error deleting order: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        public Task<ServiceResponse<OrderOverviewResponseDTO>> GetAdminOrderDetails(int orderId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

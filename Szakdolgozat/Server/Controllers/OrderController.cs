@@ -36,6 +36,8 @@ namespace Szakdolgozat.Server.Controllers
             return Ok(result);
         }
 
+  
+
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<bool>>> PlaceOrder()
         {
@@ -43,8 +45,8 @@ namespace Szakdolgozat.Server.Controllers
             return Ok(result);
         }
 
-       
-        
+
+
         [HttpPut("update-status")]
         public async Task<ActionResult<ServiceResponse<bool>>> UpdateOrderStatus([FromBody] UpdateOrderStatusRequest request)
         {
@@ -56,15 +58,25 @@ namespace Szakdolgozat.Server.Controllers
             var response = await _orderService.UpdateStatus(request.OrderId, request.NewStatus);
             return Ok(response);
         }
+
+        [HttpDelete("{orderId}"), Authorize(Roles = "admin")]
+        public async Task<ActionResult<ServiceResponse<bool>>> DeleteOrder(int orderId)
+        {
+            var result = await _orderService.DeleteOrder(orderId);
+            return Ok(result);
+        }
+
+        
     }
+
 
     public class UpdateOrderStatusRequest
     {
         public int OrderId { get; set; }
         public string NewStatus { get; set; }
     }
-        
-    
+
+
 }
 
 

@@ -13,39 +13,49 @@
 else
 {
     <div>
-        @foreach (var product in cartMeals)
-        {
-            <div class="container">
-                <div class="image-wrapper">
-                    <img src="@product.ImageUrl" class="image" />
-                </div>
-                <div class="name">
-                    <h5><a href="/product/@product.MealId">@product.Name</a></h5>
-                    <span>@product.MealType</span><br />
-                    <input type="number" value="@product.Quantity"
-                   @onchange="@((ChangeEventArgs e) => UpdateQuantity(e, product))"
-                   class="form-control input-quantity"
-                   min="1" />
-                    <button class="btn-delete" @onclick="@(() =>
-                        RemoveMealFromCart(product.MealId, product.MealTypeId))">
-                        Törlés
-                    </button>
-                </div>
-                <div class="cart-product-price">@(product.Price * product.Quantity) Ft.</div>
-            </div>
-        }
+        <h3>Kosár</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kép</th>
+                    <th>Termék</th>
+                    <th>Típus</th>
+                    <th>Mennyiség</th>
+                    <th>Ár</th>
+                    <th>Törlés</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in cartMeals)
+                {
+                    <tr>
+                        <td><img src="@product.ImageUrl" class="image" /></td>
+                        <td><a href="/product/@product.MealId">@product.Name</a></td>
+                        <td>@product.MealType</td>
+                        <td>
+                            <input type="number" value="@product.Quantity" @onchange="@((ChangeEventArgs e) => UpdateQuantity(e, product))" class="form-control input-quantity" min="1" />
+                        </td>
+                        <td>@((product.Price * product.Quantity).ToString("0.##")) Ft.</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" style="color-sc" @onclick="@(() => RemoveMealFromCart(product.MealId, product.MealTypeId))">
+                                <i class="oi oi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
         <div class="cart-product-price">
-            Összesen (@cartMeals.Sum(product => 1* product.Quantity)): @cartMeals.Sum(product => @product.Price * product.Quantity) Ft.
+            Összesen (@cartMeals.Sum(product => product.Quantity)): @cartMeals.Sum(product => product.Price * product.Quantity).ToString("0.##") Ft.
         </div>
+        <button @onclick="PlaceOrder" class="btn alert-success float-end mt-1">Megrendelés</button>
     </div>
-
-    <button @onclick="PlaceOrder" class="btn alert-success float-end mt-1">Megrendelés</button>
 }
 @code {
-        List<CartMealResponseDTO> cartMeals = null;
-        string message = "Kosár betöltése...";
-        bool isAuthenticated = false;
-        bool orderPlaced = false;
+    List<CartMealResponseDTO> cartMeals = null;
+    string message = "Kosár betöltése...";
+    bool isAuthenticated = false;
+    bool orderPlaced = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,10 +90,12 @@ else
 
     private async Task PlaceOrder()
     {
-       
+
+        
         await OrderService.PlaceOrder();
-        //await CartService.GetCartMealsCount();
         orderPlaced = true;
+        await LoadCart(); 
+        StateHasChanged(); 
     }
 
     

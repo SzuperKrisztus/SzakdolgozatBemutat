@@ -71,7 +71,7 @@ else
                     <InputCheckbox @bind-Value="variant.Visible" style="transform:scale(1.5,1.5);" disabled="@variant.Deleted"></InputCheckbox>
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" disabled="@variant.Deleted" @onclick="@(() => RemoveVariant(variant.MealTypeId))">
+                    <button type="button" class="btn btn-danger" style="color-sc" disabled="@variant.Deleted" @onclick="@(() => RemoveVariant(variant.MealTypeId))">
                         <i class="oi oi-trash"></i>
                     </button>
                 </div>
@@ -184,12 +184,15 @@ else
 
     async void DeleteMeal()
     {
+
         bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm",
-            $"Do you really want to delete '{meal.Name}'?");
+         $"Valóban szeretnéd törölni '{meal.Name}'?");
         if (confirmed)
         {
-            await MealService.DeleteMeal(meal);
-            NavigationManager.NavigateTo("admin/meals");
+            var deleteSucces = await MealService.DeleteMeal(meal);
+            await JSRuntime.InvokeVoidAsync("alert", deleteSucces);
+           
+          
         }
     }
 }

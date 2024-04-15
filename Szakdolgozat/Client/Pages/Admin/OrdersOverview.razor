@@ -24,14 +24,17 @@ else
                 <div class="details">
                     <h4>@order.Meal</h4>
                     <span>@order.OrderDate</span><br />
-                    <div class="order-price">@order.TotalPrice Ft.</div>
-                    <div class="order-status">@order.Status</div>
-                    <div>
+                    <div class="order-price" style="font-size:19px">@order.TotalPrice.ToString("0.##") Ft.</div>
+                    <div class="order-status" style="font-weight:bold">@order.Status</div>
+                    <div style="margin-bottom : 10px">
                         <button class="status-button" @onclick="() => InPreparation(order.Id)">Készül</button>
                         <button class="status-button" @onclick=" () => WaitingForPayment(order.Id)">Fizetésre vár</button>
                         <button class="status-button" @onclick="() => Payed(order.Id)">Kifizetve</button>
+                        <button type="button" class="btn btn-danger" style="color-sc" @onclick="@(() => DeleteOrder(order.Id))">
+                            <i class="oi oi-trash"></i>
+                        </button>
                     </div>
-                    
+
                     <a href="orders/@order.Id">Mutass többet...</a>
                 </div>
             </div>
@@ -42,7 +45,15 @@ else
 
     List<OrderOverviewResponseDTO> orders = null;
 
-    protected override async Task OnInitializedAsync() => orders = await OrderService.GetAdminOrders();
+    protected override async Task OnInitializedAsync()
+    {
+
+        orders = await OrderService.GetAdminOrders();
+        StateHasChanged();
+    }
+
+
+
 
     private async Task UpdateOrderStatus(int orderId, string newStatus)
     {
@@ -59,7 +70,7 @@ else
             Console.WriteLine($"Hiba történt a státusz frissítésekor: {response.Message}");
         }
     }
-    
+
     private void InPreparation(int orderId)
     {
         UpdateOrderStatus(orderId, "Készül");
@@ -71,5 +82,15 @@ else
     private void Payed(int orderId)
     {
         UpdateOrderStatus(orderId, "Kifizetve");
+    }
+
+
+
+    async void DeleteOrder(int orderId)
+    {
+        await OrderService.DeleteOrder(orderId);
+        orders = await OrderService.GetAdminOrders();
+        StateHasChanged();
+        
     }
 }

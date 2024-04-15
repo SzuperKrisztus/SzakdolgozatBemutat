@@ -32,14 +32,34 @@ namespace Szakdolgozat.Server.Services.MealService
                 {
                     Success = false,
                     Data = false,
-                    Message = "Meal not found."
+                    Message = "Az étel nem található"
                 };
             }
 
-            dbMeal.Deleted = true;
+            // Ellenőrizzük, hogy az étel szerepel-e valamelyik megrendelésben
+            bool isMealInOrder = await _context.OrderItems.AnyAsync(oi => oi.MealId == mealId);
 
+            if (isMealInOrder)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Data = false,
+                    Message = "Nem törölhető, az étel szerepel egy vagy több megrendelésben"
+                };
+            }
+
+            // Az étel nem szerepel egyetlen megrendelésben sem, így törölhetjük
+            dbMeal.Deleted = true;
+            _context.Meals.Remove(dbMeal);
             await _context.SaveChangesAsync();
-            return new ServiceResponse<bool> { Data = true };
+
+            return new ServiceResponse<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = "Az ételt sikeresen törlődött"
+            };
         }
 
         public async Task<ServiceResponse<List<Meal>>> GetAdminMeals()
@@ -94,7 +114,7 @@ namespace Szakdolgozat.Server.Services.MealService
             if (meal == null)
             {
                 response.Success = false;
-                response.Message = "Sorry, but this meal dosen't exist.";
+                response.Message = "Hoppá, ez az étel nem létezik.";
             }
             else
             {

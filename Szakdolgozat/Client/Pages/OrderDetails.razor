@@ -21,11 +21,11 @@ else
                     <span>@meal.MealType</span><br />
                     <span>Quantity:@meal.Quantity</span>
                 </div>
-               <div class="meal-price">@meal.TotalPrice Ft.</div>
+                <div class="meal-price">@meal.TotalPrice.ToString("0.##") Ft.</div>
             </div>
         }
         <div class="meal-price">
-            Total: @order.TotalPrice Ft.
+            Total: @order.TotalPrice.ToString("0.##") Ft.
         </div>
     </div>
 }

@@ -50,7 +50,7 @@ else
                 <td>
                     @foreach (var variant in meal.Variants)
                     {
-                        <span>@variant.Price</span>
+                            <span>@variant.Price.ToString("0.##")</span>
 
                         <br />
                     }

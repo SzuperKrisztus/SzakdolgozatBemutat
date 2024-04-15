@@ -16,6 +16,35 @@ namespace Szakdolgozat.Server.Services.OrderService
             _authService = authService;
         }
 
+       public async Task<ServiceResponse<bool>> DeleteOrder(int orderId)
+    {
+        var response = new ServiceResponse<bool>();
+
+        try
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                response.Success = false;
+                response.Message = "Megrendelás nem található";
+                return response;
+            }
+
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            response.Data = true;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = $"Hiba a megrendelés törlése közben: {ex.Message}";
+        }
+
+        return response;
+    }
+
         public async Task<ServiceResponse<List<OrderOverviewResponseDTO>>> GetAdminOrders()
         {
             var response = new ServiceResponse<List<OrderOverviewResponseDTO>>();
@@ -34,8 +63,8 @@ namespace Szakdolgozat.Server.Services.OrderService
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
-                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} and " +
-                                             $"{o.OrderItems.Count - 1} more..." :
+                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} és " +
+                                             $"további {o.OrderItems.Count - 1}" :
                                              o.OrderItems.First().Meal.Name,
                 MealImageUrl = o.OrderItems.First().Meal.ImageUrl
             }));
@@ -59,7 +88,7 @@ namespace Szakdolgozat.Server.Services.OrderService
             if (order == null)
             {
                 response.Success = false;
-                response.Message = "Order not found.";
+                response.Message = "Megrendelés nem található.";
                 return response;
             }
 
@@ -86,6 +115,47 @@ namespace Szakdolgozat.Server.Services.OrderService
             return response;
         }
 
+        public async Task<ServiceResponse<OrderDetailsResponseDTO>> GetAdminOrderDetails(int orderId)
+        {
+            var response = new ServiceResponse<OrderDetailsResponseDTO>();
+
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Meal)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.MealType)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                response.Success = false;
+                response.Message = "Megrendelés nem található.";
+                return response;
+            }
+
+            var orderDetails = new OrderDetailsResponseDTO
+            {
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+                Meals = new List<OrderDetailsMealResponseDTO>()
+            };
+
+            order.OrderItems.ForEach(item =>
+                orderDetails.Meals.Add(new OrderDetailsMealResponseDTO
+                {
+                    MealId = item.MealId,
+                    ImageUrl = item.Meal.ImageUrl,
+                    MealType = item.MealType.Name,
+                    Quantity = item.Quantity,
+                    Name = item.Meal.Name,
+                    TotalPrice = item.Price
+                }));
+
+            response.Data = orderDetails;
+
+            return response;
+        }
+
         public async Task<ServiceResponse<List<OrderOverviewResponseDTO>>> GetOrders()
         {
             var response = new ServiceResponse<List<OrderOverviewResponseDTO>>();
@@ -103,9 +173,9 @@ namespace Szakdolgozat.Server.Services.OrderService
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
                 Status = o.Status,
-                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} and " +
-                $"{o.OrderItems.Count - 1} more..." :
-                o.OrderItems.First().Meal.Name,
+                Meal = o.OrderItems.Count > 1 ? $"{o.OrderItems.First().Meal.Name} és " +
+                                             $"további {o.OrderItems.Count - 1}" :
+                                             o.OrderItems.First().Meal.Name,
                 MealImageUrl = o.OrderItems.First().Meal.ImageUrl
             }));
 
@@ -136,7 +206,7 @@ namespace Szakdolgozat.Server.Services.OrderService
                 OrderDate = DateTime.Now,
                 TotalPrice = totalPrice,
                 OrderItems = orderItems,
-                Status = "Ordered"
+                Status = "Megrendelve"
             };
 
             _context.Orders.Add(order);
@@ -160,7 +230,7 @@ namespace Szakdolgozat.Server.Services.OrderService
                 if (order == null)
                 {
                     response.Success = false;
-                    response.Message = "Order not found.";
+                    response.Message = "A megrendelés nem található";
                     return response;
                 }
 
@@ -173,7 +243,7 @@ namespace Szakdolgozat.Server.Services.OrderService
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = $"Error updating order status: {ex.Message}";
+                response.Message = $"Hiba történt a megrendelés sátuszának frissítése közben: {ex.Message}";
             }
 
             return response;
