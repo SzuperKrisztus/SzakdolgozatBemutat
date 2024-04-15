@@ -14,16 +14,16 @@
     <div class="dropdown-menu dropdown-menu-right  @UserMenuCssClass" style=" margin-left:  -40px ">
         <AuthorizeView>
             <Authorized>
-                <a href="profile" class="dropdown-item">Profile</a>
-                <a href="orders" class="dropdown-item">Orders</a>
+                <a href="profile" class="dropdown-item">Profil</a>
+                <a href="orders" class="dropdown-item">Rendelések</a>
                 <hr/>
                 <AdminMenu />
-                <button class="dropdown-item" @onclick="Logout">Logout</button>
+                <button class="dropdown-item" style="text-align:center; color:steelblue; font-weight:bold" @onclick="Logout">Kijelentkezés</button>
             </Authorized>
             <NotAuthorized>
                 
-                <a href="register" class="dropdown-item">Register</a>
-                <a href="login?returnUrl=@NavigationManager.ToBaseRelativePath(NavigationManager.Uri)" class="dropdown-item">Login</a>
+                <a href="register" class="dropdown-item">Regisztráció</a>
+                <a href="login?returnUrl=@NavigationManager.ToBaseRelativePath(NavigationManager.Uri)" class="dropdown-item">Bejelentkezés</a>
             </NotAuthorized>
         </AuthorizeView>
         

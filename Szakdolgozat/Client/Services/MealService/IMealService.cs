@@ -16,7 +16,7 @@ namespace Szakdolgozat.Client.Services.MealService
 
         Task<List<string>> GetMealSearchSuggestions(string searchText);
 
-        Task GetAdminMeals();
+        Task<List<Meal>> GetAdminMeals();
         Task<Meal> CreateMeal(Meal meal);
         Task<Meal> UpdateMeal(Meal meal);
         Task<string> DeleteMeal(Meal meal);

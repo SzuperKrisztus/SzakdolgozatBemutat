@@ -25,22 +25,19 @@ else
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <div class="mb-0">
             <label for="name">Name</label>
-            <InputText id="name" @bind-Value="meal.Name" class="form-control"></InputText>
+            <InputText id="name" @bind-Value="meal.Name" class="form-control" required></InputText>
         </div>
         <div class="mb-0">
-            <label for="imageUrl">Image Url</label>
-            <InputText id="imageUrl" @bind-Value="meal.ImageUrl" class="form-control"></InputText>
-        </div>
-        <div class="mb-0">
-            <img src="@meal.ImageUrl" />
+            <label for="name">ImageUrl</label>
+            <InputText id="imageurl" @bind-Value="meal.ImageUrl" class="form-control" required></InputText>
         </div>
         <div class="mb-0">
             <label for="description">Description</label>
-            <InputTextArea id="description" @bind-Value="meal.Description" class="form-control"></InputTextArea>
+            <InputTextArea id="description" @bind-Value="meal.Description" class="form-control" required></InputTextArea>
         </div>
         <div class="mb-0">
-            <label for="description">Allergen</label>
-            <InputTextArea id="allergen" @bind-Value="meal.Allergen" class="form-control"></InputTextArea>
+            <label for="allergen">Allergen</label>
+            <InputTextArea id="allergen" @bind-Value="meal.Allergen" class="form-control" required></InputTextArea>
         </div>
         <hr />
         <div class="header">
@@ -54,50 +51,57 @@ else
         {
             <div class="row">
                 <div class="col">
-                    <InputSelect disabled="@variant.Deleted" @bind-Value="variant.MealTypeId" class="form-control">
+                    <InputSelect @bind-Value="variant.MealTypeId" class="form-control" required>
                         @foreach (var mealType in MealTypeService.MealTypes)
                         {
-                            <option value="@mealType.Id.ToString()">@mealType.Name</option>
+                            <option value="@mealType.Id">@mealType.Name</option>
                         }
                     </InputSelect>
                 </div>
                 <div class="col">
-                    <InputNumber @bind-Value="variant.Price" class="form-control" disabled="@variant.Deleted"></InputNumber>
+                    <InputNumber @bind-Value="variant.Price" class="form-control" required></InputNumber>
                 </div>
                 <div class="col">
-                    <InputNumber @bind-Value="variant.OriginalPrice" class="form-control" disabled="@variant.Deleted"></InputNumber>
+                    <InputNumber @bind-Value="variant.OriginalPrice" class="form-control" required></InputNumber>
                 </div>
                 <div class="col col-visible">
-                    <InputCheckbox @bind-Value="variant.Visible" style="transform:scale(1.5,1.5);" disabled="@variant.Deleted"></InputCheckbox>
+                    <InputCheckbox @bind-Value="variant.Visible" style="transform:scale(1.5,1.5);" required></InputCheckbox>
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-danger" style="color-sc" disabled="@variant.Deleted" @onclick="@(() => RemoveVariant(variant.MealTypeId))">
+                    <button type="button" class="btn btn-danger" @onclick="@(() => RemoveVariant(variant.MealTypeId))">
                         <i class="oi oi-trash"></i>
                     </button>
                 </div>
             </div>
         }
-         <button type="button" class="btn btn-primary" @onclick="AddVariant">
-    <i class="oi oi-plus"></i> Add Variant
-    </button>
-    <hr />
-    <div class="mb-0">
-    <label for="category">Category</label>
-    <InputSelect id="category" @bind-Value="meal.CategoryId" class="form-control">
+        <button type="button" class="btn btn-primary" @onclick="AddVariant">
+            <i class="oi oi-plus"></i> Add Variant
+        </button>
+        <hr />
+        <div class="mb-0">
+            <label for="category">Category</label>
+            <InputSelect id="category" @bind-Value="meal.CategoryId" class="form-control" required>
                 @foreach (var category in CategoryService.AdminCategories)
                 {
                     <option value="@category.Id">@category.Name</option>
                 }
-    </InputSelect>
-    </div>
-    <hr />
-    <div class="form-check">
-    <InputCheckbox id="visible" @bind-Value="meal.Visible" class="form-check-input"></InputCheckbox>
-    <label for="visible" class="form-check-label">Visible</label>
-    </div>
-    <hr />
-    <button type="submit" class="btn btn-primary float-end">@btnText</button>
-    <ValidationSummary></ValidationSummary>
+            </InputSelect>
+        </div>
+        <hr />
+        <div class="form-check">
+            <InputCheckbox id="visible" @bind-Value="meal.Visible" class="form-check-input" required></InputCheckbox>
+            <label for="visible" class="form-check-label">Visible</label>
+        </div>
+        <hr />
+        <button type="submit" class="btn btn-primary float-end" @onclick="AddOrUpdateMeal" disabled="@(!meal.Variants.Any(v => v.MealTypeId != null && v.MealTypeId != 0) || (meal.CategoryId == 0) || isProcessing)">
+            @btnText
+        </button>
+
+
+
+
+        <ValidationSummary></ValidationSummary>
+        <ValidationMessage For="@(() => meal.Variants)" />
     </EditForm>
     @if (!meal.IsNew)
     {
@@ -110,7 +114,7 @@ else
 @code {
     [Parameter]
     public int Id { get; set; }
-
+    bool isProcessing = false;
     Meal meal = new Meal();
     bool loading = true;
     string btnText = "";
@@ -167,18 +171,32 @@ else
             .Add(new MealVariant { IsNew = true, MealId = meal.Id });
     }
 
-    async void AddOrUpdateMeal()
+    async Task AddOrUpdateMeal()
     {
-        if (meal.IsNew)
+        try
         {
-            var result = await MealService.CreateMeal(meal);
-            NavigationManager.NavigateTo($"admin/meal/{result.Id}");
+            isProcessing = true;
+
+            if (meal.IsNew)
+            {
+                var result = await MealService.CreateMeal(meal);
+                NavigationManager.NavigateTo($"admin/meal/{result.Id}");
+            }
+            else
+            {
+                meal.IsNew = false;
+                meal = await MealService.UpdateMeal(meal);
+                NavigationManager.NavigateTo($"admin/meal/{meal.Id}", true);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            meal.IsNew = false;
-            meal = await MealService.UpdateMeal(meal);
-            NavigationManager.NavigateTo($"admin/meal/{meal.Id}", true);
+            // Hibakezelés, például logolás vagy felhasználó értesítése
+            Console.WriteLine($"Hiba történt: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
         }
     }
 
@@ -191,8 +209,8 @@ else
         {
             var deleteSucces = await MealService.DeleteMeal(meal);
             await JSRuntime.InvokeVoidAsync("alert", deleteSucces);
-           
-          
+
+
         }
     }
 }

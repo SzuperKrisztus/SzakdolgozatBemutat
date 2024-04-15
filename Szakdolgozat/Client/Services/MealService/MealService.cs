@@ -55,13 +55,14 @@ namespace Szakdolgozat.Client.Services.MealService
 
         }
 
-        public async Task GetAdminMeals()
+        public async Task<List<Meal>> GetAdminMeals()
         {
             var result = await _http
                 .GetFromJsonAsync<ServiceResponse<List<Meal>>>("api/meal/admin");
             AdminMeals = result.Data;
             if (AdminMeals.Count == 0)
                 Message = "Nincs ilyen étel.";
+            return AdminMeals;
         }
 
 

@@ -1,0 +1,85 @@
+﻿@page "/admin/orderstatistics"
+@inject IMealService MealService
+@inject IMealTypeService MealTypeService
+@inject IMealVariantService MealVariantService
+@using System.Globalization
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 my-5">
+            <RadzenCard class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+                <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox>
+                <RadzenLabel Text="Simított" Component="smooth" Style="margin-right: 1rem;" />
+                <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
+                <RadzenLabel Text="Adatcímkék megjelenítése" Component="dataLabels" Style="margin-right: 1rem;" />
+                <RadzenCheckBox @bind-Value="@showMarkers" Name="markers"></RadzenCheckBox>
+                <RadzenLabel Text="Jelölők megjelenítése" Component="markers" />
+            </RadzenCard>
+            <RadzenChart>
+                <RadzenLineSeries Smooth="@smooth" Data="@dataItems" CategoryProperty="Name" Title="Megrendelések" ValueProperty="Revenue">
+                    <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Circle" />
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </RadzenLineSeries>
+                <RadzenCategoryAxis Padding="20" />
+                <RadzenValueAxis >
+                    <RadzenGridLines Visible="true" />
+                    <RadzenAxisTitle Text="Megrendelt darab" />
+                </RadzenValueAxis>             
+            </RadzenChart>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    bool smooth = false;
+    bool showDataLabels = false;
+    bool showMarkers = true;
+    List<DataItem> dataItems = new List<DataItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        StateHasChanged();
+        await LoadDataItems();
+        StateHasChanged();
+    }
+
+    async Task LoadDataItems()
+    {
+        // Use the MealService to fetch data
+        var adminMeals = await MealService.GetAdminMeals();
+
+        dataItems.Clear();
+        foreach (var meal in adminMeals)
+        {
+            // Ellenőrizzük, hogy az adott meal.Id szerepel-e az adatbázisban
+            var revenue = await MealVariantService.GetMealItemCount(meal.Id);
+            StateHasChanged();
+
+            // Ha a rekord nem található, a revenue érték legyen 0
+            
+
+            // Populate dataItems with meal names and the revenue
+            dataItems.Add(new DataItem { Name = meal.Name, Revenue = revenue });
+            StateHasChanged();
+        }
+    }
+
+    string FormatAsUSD(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+
+    // Define DataItem class here or import it from the namespace
+    class DataItem
+    {
+        public string Name { get; set; }
+        public double Revenue { get; set; }
+    }
+
+    
+
+   
+}
